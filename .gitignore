@@ -1,0 +1,19 @@
+# Ignore Jekyll generated files
+_site/
+.sass-cache/
+.jekyll-cache/
+
+# Ignore dependencies
+vendor/
+.bundle/
+node_modules/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore backups and temporary files
+*.bkp
+*.swp
+*~
+

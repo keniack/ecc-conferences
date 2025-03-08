@@ -1,0 +1,9 @@
+title: "ECC Conferences"
+repository: "your-github-username/ecc-conferences"
+theme: minima
+plugins:
+  - jekyll-github-metadata
+  - jekyll-feed
+include:
+  - _data
+

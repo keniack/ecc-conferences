@@ -1,0 +1,126 @@
+---
+layout: default
+title: EC Conferences
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge and Cloud Conferences CFP</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .header {
+            background-color: #3b5998;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #3b5998;
+            border-bottom: 2px solid #3b5998;
+            padding-bottom: 5px;
+        }
+        .conference-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .conference-item:hover {
+            background-color: #f2f2f2;
+        }
+        .conference-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007BFF;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .conference-title:hover {
+            text-decoration: underline;
+        }
+        .conference-meta {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Edge and Cloud Conferences CFP Tracker</div>
+    <div class="container">
+        {% assign today = 'now' | date: "%s" %}
+        {% assign upcoming_conferences = "" | split: "," %}
+        {% assign past_conferences = "" | split: "," %}
+
+        {% for conference in site.data.conferences.conferences %}
+            {% assign submission_date = conference.submission_deadline | date: "%s" %}
+            {% assign days_to_submission = submission_date | minus: today | divided_by: 86400 | floor %}
+            {% if days_to_submission >= 0 %}
+                {% assign conference_with_days = conference | merge: days_to_submission: days_to_submission %}
+                {% assign upcoming_conferences = upcoming_conferences | push: conference_with_days %}
+            {% else %}
+                {% assign past_conferences = past_conferences | push: conference %}
+            {% endif %}
+        {% endfor %}
+
+        {% assign sorted_upcoming_conferences = upcoming_conferences | sort: "days_to_submission" %}
+        {% assign sorted_past_conferences = past_conferences | sort: "submission_deadline" | reverse %}
+
+        <h2>Upcoming Deadlines</h2>
+        {% for conference in sorted_upcoming_conferences %}
+            <div class="conference-item">
+                <a href="{{ conference.website }}" target="_blank" class="conference-title">
+                    {{ conference.acronym }}: {{ conference.name }}
+                </a>
+                <div class="conference-meta">
+                    <span>📅 Submission Deadline: {{ conference.submission_deadline | date: "%d.%m.%Y" }}
+                          📨 Notification Date: {{ conference.notification | date: "%d.%m.%Y" }}</span>
+                    <span>🎤 Conference: {{ conference.conference_start | date: "%d.%m.%Y" }} - {{ conference.conference_end | date: "%d.%m.%Y" }}
+                    📍 Location: {{ conference.location }}
+                    ⭐ Ranking: {{ conference.ranking }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <br><br>
+        <h2>Past Deadlines</h2>
+        {% for conference in sorted_past_conferences %}
+            <div class="conference-item past">
+                <a href="{{ conference.website }}" target="_blank" class="conference-title">
+                    {{ conference.acronym }}: {{ conference.name }}
+                </a>
+                <div class="conference-meta">
+                    <span>📅 Submission Deadline: {{ conference.submission_deadline | date: "%d.%m.%Y" }}
+                          📨 Notification Date: {{ conference.notification | date: "%d.%m.%Y" }}</span>
+                    <span>🎤 Conference: {{ conference.conference_start | date: "%d.%m.%Y" }} - {{ conference.conference_end | date: "%d.%m.%Y" }}
+                    📍 Location: {{ conference.location }}
+                    ⭐ Ranking: {{ conference.ranking }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
