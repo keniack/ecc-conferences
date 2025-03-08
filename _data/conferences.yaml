@@ -163,7 +163,7 @@ conferences:
 
   - name: "International Conference on Future Internet of Things and Cloud"
     acronym: "FiCloud"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "10.03.2025"
     notification: "25.05.2025"
     conference_start: "11.08.2025"
@@ -173,7 +173,7 @@ conferences:
 
   - name: "IEEE International Conference on Cloud Engineering"
     acronym: "IC2E"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "24.04.2025"
     notification: "25.05.2025"
     conference_start: "23.06.2025"
@@ -183,17 +183,17 @@ conferences:
 
   - name: "ACM/IEEE Symposium on Edge Computing"
     acronym: "SEC"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "20.06.2025"
     notification: "22.09.2025"
-    conference_start: "12.2025"
-    conference_end: "12.2025"
+    conference_start: "01.12.2025"
+    conference_end: "03.12.2025"
     location: "Washington, DC, USA"
     website: "https://ficloud.org/2025/"
 
   - name: "ACM International Conference on Distributed and Event-based Systems"
     acronym: "DEBS"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "17.02.2025"
     notification: "04.04.2025"
     conference_start: "10.06.2025"
@@ -203,7 +203,7 @@ conferences:
 
   - name: "ACM Symposium on Cloud Computing"
     acronym: "SoCC"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "08.07.2024"
     notification: "25.09.2024"
     conference_start: "20.11.2024"
@@ -213,7 +213,7 @@ conferences:
 
   - name: "Utility and Cloud Computing"
     acronym: "UCC"
-    ranking: "-"
+    ranking: "Unknown"
     submission_deadline: "20.09.2024"
     notification: "07.10.2024"
     conference_start: "14.12.2024"

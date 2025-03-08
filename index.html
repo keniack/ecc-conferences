@@ -71,56 +71,67 @@ title: EC Conferences
 <body>
     <div class="header">Edge and Cloud Conferences CFP Tracker</div>
     <div class="container">
-        {% assign today = 'now' | date: "%s" %}
-        {% assign upcoming_conferences = "" | split: "," %}
-        {% assign past_conferences = "" | split: "," %}
-
-        {% for conference in site.data.conferences.conferences %}
-            {% assign submission_date = conference.submission_deadline | date: "%s" %}
-            {% assign days_to_submission = submission_date | minus: today | divided_by: 86400 | floor %}
-            {% if days_to_submission >= 0 %}
-                {% assign conference_with_days = conference | merge: days_to_submission: days_to_submission %}
-                {% assign upcoming_conferences = upcoming_conferences | push: conference_with_days %}
-            {% else %}
-                {% assign past_conferences = past_conferences | push: conference %}
-            {% endif %}
-        {% endfor %}
-
-        {% assign sorted_upcoming_conferences = upcoming_conferences | sort: "days_to_submission" %}
-        {% assign sorted_past_conferences = past_conferences | sort: "submission_deadline" | reverse %}
-
+        
         <h2>Upcoming Deadlines</h2>
-        {% for conference in sorted_upcoming_conferences %}
-            <div class="conference-item">
-                <a href="{{ conference.website }}" target="_blank" class="conference-title">
-                    {{ conference.acronym }}: {{ conference.name }}
-                </a>
-                <div class="conference-meta">
-                    <span>📅 Submission Deadline: {{ conference.submission_deadline | date: "%d.%m.%Y" }}
-                          📨 Notification Date: {{ conference.notification | date: "%d.%m.%Y" }}</span>
-                    <span>🎤 Conference: {{ conference.conference_start | date: "%d.%m.%Y" }} - {{ conference.conference_end | date: "%d.%m.%Y" }}
-                    📍 Location: {{ conference.location }}
-                    ⭐ Ranking: {{ conference.ranking }}</span>
-                </div>
-            </div>
-        {% endfor %}
+        <div id="upcoming-conferences"></div>
 
         <br><br>
+
         <h2>Past Deadlines</h2>
-        {% for conference in sorted_past_conferences %}
-            <div class="conference-item past">
-                <a href="{{ conference.website }}" target="_blank" class="conference-title">
-                    {{ conference.acronym }}: {{ conference.name }}
-                </a>
-                <div class="conference-meta">
-                    <span>📅 Submission Deadline: {{ conference.submission_deadline | date: "%d.%m.%Y" }}
-                          📨 Notification Date: {{ conference.notification | date: "%d.%m.%Y" }}</span>
-                    <span>🎤 Conference: {{ conference.conference_start | date: "%d.%m.%Y" }} - {{ conference.conference_end | date: "%d.%m.%Y" }}
-                    📍 Location: {{ conference.location }}
-                    ⭐ Ranking: {{ conference.ranking }}</span>
-                </div>
-            </div>
-        {% endfor %}
+        <div id="past-conferences"></div>
+
     </div>
+
+    <!-- Liquid: Convert YAML Data to JSON -->
+    <script>
+    const conferences = {{ site.data.conferences.conferences | jsonify }};
+
+    function parseDate(dateString) {
+        const [day, month, year] = dateString.split(".");
+        return new Date(`${year}-${month}-${day}`);
+    }
+
+    function renderConferences(sortedConferences, containerId, isUpcoming) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        // Reverse the past deadlines
+        const finalList = isUpcoming ? sortedConferences : sortedConferences.slice().reverse();
+
+        finalList.forEach(conference => {
+            const submissionDate = parseDate(conference.submission_deadline);
+            const today = new Date();
+            const daysToSubmission = Math.ceil((submissionDate - today) / (1000 * 60 * 60 * 24));
+
+            if ((isUpcoming && daysToSubmission >= 0) || (!isUpcoming && daysToSubmission < 0)) {
+                const conferenceHTML = `
+                    <div class="conference-item">
+                        <a href="${conference.website}" target="_blank" class="conference-title">
+                            ${conference.acronym}: ${conference.name}
+                        </a>
+                        <div class="conference-meta">
+                            <span>📅 Submission Deadline: ${conference.submission_deadline}
+                                  📨 Notification Date: ${conference.notification}</span>
+                            <span>🎤 Conference: ${conference.conference_start} - ${conference.conference_end}
+                            📍 Location: ${conference.location}
+                            ⭐ Ranking: ${conference.ranking}</span>
+                            ${isUpcoming ? `<span>⏳ Days to Submission: ${daysToSubmission}</span>` : ""}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += conferenceHTML;
+            }
+        });
+    }
+
+    // Sort conferences by submission date
+    const sortedConferences = conferences.sort((a, b) => parseDate(a.submission_deadline) - parseDate(b.submission_deadline));
+
+    // Render Upcoming and Past Deadlines
+    renderConferences(sortedConferences, "upcoming-conferences", true);
+    renderConferences(sortedConferences, "past-conferences", false);
+</script>
+
+
 </body>
 </html>
