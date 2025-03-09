@@ -1,0 +1,4 @@
+Type: CNAME
+Name: ecc
+Value: keniack.github.io.
+TTL: 3600
