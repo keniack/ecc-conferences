@@ -14,7 +14,6 @@ This repository tracks **major Edge and Cloud computing conferences**, including
 ✔️ **Sorted by Submission Deadline**  
 ✔️ **Days to Submission Countdown**  
 ✔️ **Ranks & Conference Details**  
-✔️ **Automatic Updates from YAML Data**  
 
 ---
 
