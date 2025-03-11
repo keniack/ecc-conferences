@@ -79,7 +79,7 @@ conferences:
     location: "Bolzano, Italy"
     website: "https://conf.researchr.org/home/esocc-2025"
 
- - name: "International Conference on Smart Computing"
+  - name: "International Conference on Smart Computing"
     acronym: "SmartComp"
     ranking: "Unknown"
     submission_deadline: "16.03.2025"
