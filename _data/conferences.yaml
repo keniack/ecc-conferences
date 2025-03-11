@@ -79,6 +79,16 @@ conferences:
     location: "Bolzano, Italy"
     website: "https://conf.researchr.org/home/esocc-2025"
 
+ - name: "International Conference on Smart Computing"
+    acronym: "SmartComp"
+    ranking: "Unknown"
+    submission_deadline: "16.03.2025"
+    notification: "10.04.2025"
+    conference_start: "16.06.2025"
+    conference_end: "19.06.2025"
+    location: "Cork, Ireland"
+    website: "https://www.cs.ucc.ie/smartcomp2025/"
+
   - name: "ACM International Conference on the Internet of Things"
     acronym: "IoT"
     ranking: "Unknown"
