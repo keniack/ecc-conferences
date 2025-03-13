@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Service-Oriented Computing"
+    acronym: "ICSOC"
+    ranking: "A"
+    submission_deadline: "09.05.2025"
+    notification: "15.09.2025"
+    conference_start: "01.12.2025"
+    conference_end: "04.12.2025"
+    location: "Shenzhen, China"
+    website: "https://icsoc2025.hit.edu.cn/"
+    
   - name: "International Conference on Computer Systems and Applications"
     acronym: "AICCSA"
     ranking: "C"
