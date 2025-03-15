@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Distributed Computing in Smart Systems and the Internet of Things"
+    acronym: "DCOSS-IoT"
+    ranking: "B"
+    submission_deadline: "11.02.2025"
+    notification: "28.03.2025"
+    conference_start: "09.06.2025"
+    conference_end: "11.06.2025"
+    location: "Lucca, Italy"
+    website: "https://dcoss.org/"
+
   - name: "International Conference on Service-Oriented Computing"
     acronym: "ICSOC"
     ranking: "A"
