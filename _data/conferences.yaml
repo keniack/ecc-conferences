@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Smart Internet of Things"
+    acronym: "SmartIoT"
+    ranking: "Unknown"
+    submission_deadline: "15.07.2025"
+    notification: "15.09.2025"
+    conference_start: "17.11.2025"
+    conference_end: "20.11.2025"
+    location: "Sidney, Australia"
+    website: "https://www.ieee-smartiot.org/index.jsp"
+
   - name: "International Conference on Cloud and Big Data Computing"
     acronym: "CBDCom"
     ranking: "Unknown"
