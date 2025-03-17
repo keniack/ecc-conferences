@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Cluster Computing"
+    acronym: "Cluster"
+    ranking: "B"
+    submission_deadline: "25.04.2025"
+    notification: "04.07.2025"
+    conference_start: "02.09.2025"
+    conference_end: "05.096.2025"
+    location: "Edinburgh, Scotland"
+    website: "https://clustercomp.org/2025/"
+
   - name: "International Conference on Distributed Computing in Smart Systems and the Internet of Things"
     acronym: "DCOSS-IoT"
     ranking: "B"
