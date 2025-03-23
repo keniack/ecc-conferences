@@ -269,7 +269,7 @@ conferences:
     conference_start: "23.06.2025"
     conference_end: "26.09.2025"
     location: "Rennes, France"
-    website: "https://ficloud.org/2025/"
+    website: "https://conferences.computer.org/IC2E/2025/"
 
   - name: "ACM/IEEE Symposium on Edge Computing"
     acronym: "SEC"
