@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Dependable Systems and Their Applications"
+    acronym: "DSA"
+    ranking: "Unknown"
+    submission_deadline: "15.09.2025"
+    notification: "20.10.2025"
+    conference_start: "24.11.2025"
+    conference_end: "26.11.2025"
+    location: "Sharjah, UAE"
+    website: "https://dsa25.techconf.org/"
+    
   - name: "International Conference on Smart Internet of Things"
     acronym: "SmartIoT"
     ranking: "Unknown"
