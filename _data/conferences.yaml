@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Cloud Computing and Services Science"
+    acronym: "CLOSER"
+    ranking: "C"
+    submission_deadline: "05.01.2026"
+    notification: "03.03.2026"
+    conference_start: "19.05.2026"
+    conference_end: "21.05.2026"
+    location: "Benidorm, Spain"
+    website: "https://closer.scitevents.org/Home.aspx"
+    
   - name: "International Conference on Dependable Systems and Their Applications"
     acronym: "DSA"
     ranking: "Unknown"
