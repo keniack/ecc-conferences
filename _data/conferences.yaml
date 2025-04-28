@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Mobility: Operations, Services, and Technologies"
+    acronym: "MOST"
+    ranking: "Unknown"
+    submission_deadline: "10.01.2025"
+    notification: "28.02.2025"
+    conference_start: "04.05.2025"
+    conference_end: "06.05.2025"
+    location: "Newark, DE, USA"
+    website: "https://ieeemobility.org/MOST2025/"
+    
   - name: "International Conference on Cognitive Machine Intelligence"
     acronym: "CogMi"
     ranking: "Unknown"
