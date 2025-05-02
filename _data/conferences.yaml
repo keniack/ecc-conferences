@@ -243,7 +243,7 @@ conferences:
   - name: "Symposium on Reliable Distributed Systems"
     acronym: "SRDS"
     ranking: "B"
-    submission_deadline: "02.05.2025"
+    submission_deadline: "09.05.2025"
     notification: "27.06.2025"
     conference_start: "29.09.2025"
     conference_end: "02.10.2025"
