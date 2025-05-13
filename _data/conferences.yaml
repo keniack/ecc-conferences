@@ -1,4 +1,14 @@
 conferences:
+  - name: "IEEE International Conferences on High Performance Computing and Communications"
+    acronym: "HPCC"
+    ranking: "C"
+    submission_deadline: "18.05.2025"
+    notification: "15.06.2025"
+    conference_start: "13.08.2025"
+    conference_end: "15.08.2025"
+    location: "Exeter, UK"
+    website: "https://hpcn.exeter.ac.uk/hpcc2025/index.php"
+
   - name: "International Conference on Mobility: Operations, Services, and Technologies"
     acronym: "MOST"
     ranking: "Unknown"
