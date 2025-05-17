@@ -1,4 +1,14 @@
 conferences:
+  - name: "IEEE/ACM International Symposium on Quality of Service"
+    acronym: "IWQoS"
+    ranking: "B"
+    submission_deadline: "23.02.2025"
+    notification: "04.04.2025"
+    conference_start: "02.07.2025"
+    conference_end: "04.07.2025"
+    location: "Golden Coast, Australia"
+    website: "https://iwqos2025.ieee-iwqos.org/authors/call-papers"
+    
   - name: "IEEE International Conferences on High Performance Computing and Communications"
     acronym: "HPCC"
     ranking: "C"
