@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Conference on Parallel, Distributed, and Network-based Processing"
+    acronym: "PDP"
+    ranking: "C"
+    submission_deadline: "12.11.2024"
+    notification: "20.12.2024"
+    conference_start: "12.03.2025"
+    conference_end: "14.03.2025"
+    location: "Turin, Italy"
+    website: "https://pdp2025.org/"
+    
   - name: "IEEE/ACM International Symposium on Quality of Service"
     acronym: "IWQoS"
     ranking: "B"
