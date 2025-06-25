@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Symposium on Cluster, Cloud, and Internet Computing"
+    acronym: "CCGRID"
+    ranking: "B"
+    submission_deadline: "15.12.2026"
+    notification: "10.02.2026"
+    conference_start: "18.05.2026"
+    conference_end: "21.05.2026"
+    location: "Sidney, Australia"
+    website: "https://ccgrid2026.cdms.westernsydney.edu.au/"
+    
   - name: "International Conference on Parallel, Distributed, and Network-based Processing"
     acronym: "PDP"
     ranking: "C"
