@@ -1,4 +1,14 @@
 conferences:
+  - name: "International Performance Computing and Communications Conference"
+    acronym: "IPCCC"
+    ranking: "C"
+    submission_deadline: "07.07.2025"
+    notification: "20.08.2025"
+    conference_start: "21.11.2025"
+    conference_end: "23.11.2025"
+    location: "Austin, Texas, USA"
+    website: "https://www.ipccc.org/"
+    
   - name: "International Symposium on Cluster, Cloud, and Internet Computing"
     acronym: "CCGRID"
     ranking: "B"
