@@ -1,4 +1,14 @@
 conferences:
+  - name: "IEEE International Conference on Parallel and Distributed Systems"
+    acronym: "ICPADS"
+    ranking: "C"
+    submission_deadline: "15.08.2025"
+    notification: "01.10.2025"
+    conference_start: "14.12.2025"
+    conference_end: "18.12.2025"
+    location: "Hefei, China"
+    website: "http://ieee-icpads.org.cn/icpads2025.html"
+
   - name: "ACM Symposium On Applied Computing"
     acronym: "ACM SAC"
     ranking: "B"
