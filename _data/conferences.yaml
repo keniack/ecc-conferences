@@ -232,7 +232,7 @@ conferences:
   - name: "International Conference on Distributed Computing Systems"
     acronym: "ICDCS"
     ranking: "A"
-    submission_deadline: "18.12.2025"
+    submission_deadline: "12.12.2025"
     notification: "02.04.2026"
     conference_start: "20.07.2026"
     conference_end: "23.07.2026"
