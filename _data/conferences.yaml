@@ -301,7 +301,7 @@ conferences:
 
   - name: "International Conference on Smart Computing"
     acronym: "SmartComp"
-    ranking: "Unknown"
+    ranking: "B"
     submission_deadline: "16.02.2026"
     notification: "15.04.2025"
     conference_start: "22.06.2025"
