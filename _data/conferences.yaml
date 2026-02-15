@@ -433,7 +433,7 @@ conferences:
   - name: "ACM International Conference on Distributed and Event-based Systems"
     acronym: "DEBS"
     ranking: "Unknown"
-    submission_deadline: "20.02.2026"
+    submission_deadline: "01.03.2026"
     notification: "18.04.2026"
     conference_start: "23.06.2026"
     conference_end: "26.06.2026"
