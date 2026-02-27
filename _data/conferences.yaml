@@ -1,5 +1,15 @@
 conferences:
-  - name: "IEEE IEEE International Conference on Autonomic Computing and Self-Organizing Systems"
+  - name: "IEEE International Conference on eScience"
+    acronym: "eScience"
+    ranking: "Unknown"
+    submission_deadline: "18.05.2026"
+    notification: "29.06.2026"
+    conference_start: "28.09.2026"
+    conference_end: "02.10.2026"
+    location: "Naples, Italy"
+    website: "https://www.escience-conference.org/2026/call-for-papers"
+    
+  - name: "IEEE International Conference on Autonomic Computing and Self-Organizing Systems"
     acronym: "ACSOS"
     ranking: "Unknown"
     submission_deadline: "03.05.2026"
