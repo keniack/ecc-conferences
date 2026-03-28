@@ -73,7 +73,8 @@ DATE_CANDIDATE_PATTERNS = (
     re.compile(rf"\b{MONTH_PATTERN}\s+\d{{1,2}},\s+\d{{4}}\b", re.IGNORECASE),
     re.compile(rf"\b\d{{1,2}}\s+{MONTH_PATTERN}\s+\d{{4}}\b", re.IGNORECASE),
 )
-DEFAULT_MODEL = "gpt-4.1-mini"
+DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-conferences)"
 LLM_MAX_RETRIES = 2
 
@@ -635,7 +636,7 @@ def analyze_with_llm(
     }
 
     api_key = get_env_value("OPENAI_API_KEY")
-    base_url = get_env_value("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+    base_url = get_env_value("OPENAI_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
     request = urllib.request.Request(
         f"{base_url}/chat/completions",
         data=json.dumps(payload).encode("utf-8"),
@@ -702,7 +703,7 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
         return {
             "status": "review",
             "confidence": 0.5,
-            "reason": "Page is reachable, but a structured update requires an API key.",
+            "reason": "Page is reachable, but heuristic fallback cannot confidently extract structured updates.",
             "selected_url": current.final_url or current.url,
             "record": {},
         }
@@ -786,11 +787,12 @@ def analyze_conference(
         except Exception as exc:
             analysis = dict(heuristic)
             heuristic_reason = collapse_whitespace(str(heuristic.get("reason", "")))
-            prefix = (
-                "LLM rate-limited; using heuristic result."
-                if isinstance(exc, urllib.error.HTTPError) and exc.code == 429
-                else f"LLM analysis failed: {exc}. Using heuristic result."
-            )
+            if isinstance(exc, urllib.error.HTTPError) and exc.code == 429:
+                prefix = "LLM rate-limited; using heuristic result."
+            elif isinstance(exc, urllib.error.HTTPError) and exc.code == 401:
+                prefix = "LLM provider rejected the API key or endpoint configuration (401 Unauthorized); using heuristic result."
+            else:
+                prefix = f"LLM analysis failed: {exc}. Using heuristic result."
             analysis["reason"] = collapse_whitespace(f"{prefix} {heuristic_reason}")
             if not analysis.get("selected_url"):
                 analysis["selected_url"] = primary_snapshot.final_url or primary_snapshot.url
@@ -901,7 +903,7 @@ def build_report(
         lines.append("## Configuration")
         lines.append("")
         lines.append(
-            "- Set the `OPENAI_API_KEY` secret to enable structured extraction and automatic updates."
+            f"- Set the `OPENAI_API_KEY` secret to enable structured extraction. Default provider settings use `{DEFAULT_MODEL}` at `{DEFAULT_BASE_URL}`."
         )
         lines.append("")
 
