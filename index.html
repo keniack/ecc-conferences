@@ -82,6 +82,12 @@
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
+        .hero-link-button {
+            background: transparent;
+            cursor: pointer;
+            font: inherit;
+        }
+
         .hero-link:hover {
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(255, 255, 255, 0.45);
@@ -134,6 +140,109 @@
 
         .results-note {
             margin: 0 0 6px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .submit-card {
+            margin-bottom: 18px;
+            padding: 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .submit-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .submit-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .submit-header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.5;
+        }
+
+        .submit-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.92rem;
+            white-space: nowrap;
+        }
+
+        .submit-link:hover {
+            text-decoration: underline;
+        }
+
+        .submit-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 14px;
+        }
+
+        .submit-field--full {
+            grid-column: 1 / -1;
+        }
+
+        .submit-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .submit-field input,
+        .submit-field select {
+            width: 100%;
+            min-height: 42px;
+            padding: 0 12px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .submit-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .primary-button {
+            min-height: 42px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--primary);
+            color: #fff;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .submit-feedback {
+            margin: 0;
             color: var(--muted);
             font-size: 0.92rem;
         }
@@ -334,12 +443,15 @@
                 grid-template-columns: 1fr;
             }
 
+            .submit-header,
+            .submit-actions,
             .conference-top,
             .section-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
+            .submit-form,
             .conference-meta {
                 grid-template-columns: 1fr;
             }
@@ -357,6 +469,7 @@
             <div class="hero-links">
                 <a class="hero-link" href="https://github.com/keniack/ecc-conferences" target="_blank" rel="noreferrer">Source Code</a>
                 <a class="hero-link" href="https://github.com/keniack/ecc-conferences/graphs/contributors" target="_blank" rel="noreferrer">Contributors</a>
+                <button class="hero-link hero-link-button" id="add-conference-toggle" type="button" aria-expanded="false" aria-controls="add-conference-panel">Add Conference</button>
             </div>
         </div>
     </header>
@@ -378,6 +491,35 @@
                     <option value="C">C</option>
                     <option value="Unknown">Unknown</option>
                 </select>
+            </div>
+        </section>
+
+        <section class="submit-card" id="add-conference-panel" aria-labelledby="submit-title" hidden>
+            <div class="submit-header">
+                <div>
+                    <h2 id="submit-title">Add a conference</h2>
+                    <p>
+                        Submit a conference name or acronym plus a public URL. GitHub Actions will try to fill the
+                        missing fields automatically before opening a pull request against <code>_data/conferences.yaml</code>.
+                    </p>
+                </div>
+                <button class="section-toggle" id="close-submission-form" type="button">Hide</button>
+            </div>
+
+            <form class="submit-form" id="submission-form">
+                <div class="submit-field submit-field--full">
+                    <label for="submission-conference">Conference name or acronym</label>
+                    <input id="submission-conference" name="conference" type="text" required>
+                </div>
+                <div class="submit-field submit-field--full">
+                    <label for="submission-website">Conference or CFP URL</label>
+                    <input id="submission-website" name="website" type="url" placeholder="https://example.org/call-for-papers" required>
+                </div>
+            </form>
+
+            <div class="submit-actions">
+                <button class="primary-button" type="submit" form="submission-form">Create GitHub submission</button>
+                <p class="submit-feedback" id="submission-feedback">Only GitHub is used here. Missing metadata will be auto-filled when possible.</p>
             </div>
         </section>
 
@@ -412,6 +554,8 @@
     </footer>
 
     <script>
+        const repositoryUrl = "https://github.com/keniack/ecc-conferences";
+        const submissionMarker = "<!-- conference-submission -->";
         const conferences = {{ site.data.conferences.conferences | jsonify }};
         const state = {
             query: "",
@@ -464,6 +608,37 @@
 
         function normalizeRanking(ranking) {
             return ranking === "A" || ranking === "B" || ranking === "C" ? ranking : "Unknown";
+        }
+
+        function normalizeTextInput(value) {
+            return value.trim().replace(/\s+/g, " ");
+        }
+
+        function buildSubmissionIssueUrl(formData) {
+            const payload = {
+                conference: normalizeTextInput(formData.get("conference") || ""),
+                website: normalizeTextInput(formData.get("website") || "")
+            };
+
+            const title = `Add conference: ${payload.conference}`;
+            const body = [
+                submissionMarker,
+                "### Conference Submission",
+                "",
+                `- Conference: ${payload.conference}`,
+                `- Website: ${payload.website}`
+            ].join("\n");
+
+            return `${repositoryUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+        }
+
+        function isDisallowedConferenceUrl(value) {
+            try {
+                const hostname = new URL(value).hostname.toLowerCase();
+                return ["easychair", "hotcrp", "edas"].some((fragment) => hostname.includes(fragment));
+            } catch (error) {
+                return false;
+            }
         }
 
         function conferenceMatchesFilters(conference) {
@@ -623,6 +798,54 @@
         document.getElementById("past-toggle").addEventListener("click", () => {
             state.collapsed.past = !state.collapsed.past;
             updateCollapseButton("past", document.querySelectorAll("#past-conferences .conference-item").length);
+        });
+
+        function setSubmissionPanelOpen(isOpen) {
+            const panel = document.getElementById("add-conference-panel");
+            const toggle = document.getElementById("add-conference-toggle");
+            panel.hidden = !isOpen;
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            toggle.textContent = isOpen ? "Hide Add Conference" : "Add Conference";
+
+            if (isOpen) {
+                panel.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+
+        document.getElementById("add-conference-toggle").addEventListener("click", () => {
+            const panel = document.getElementById("add-conference-panel");
+            setSubmissionPanelOpen(panel.hidden);
+        });
+
+        document.getElementById("close-submission-form").addEventListener("click", () => {
+            setSubmissionPanelOpen(false);
+        });
+
+        document.getElementById("submission-form").addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            if (!form.reportValidity()) {
+                return;
+            }
+
+            const feedback = document.getElementById("submission-feedback");
+            const website = form.elements.website.value;
+            if (isDisallowedConferenceUrl(website)) {
+                feedback.textContent = "Use the public conference or CFP page instead of an EasyChair, HotCRP, or EDAS URL.";
+                return;
+            }
+
+            const issueUrl = buildSubmissionIssueUrl(new FormData(form));
+            const newWindow = window.open(issueUrl, "_blank", "noopener,noreferrer");
+
+            if (newWindow) {
+                feedback.textContent = "GitHub issue opened in a new tab. After you submit it there, the repository will open a PR automatically.";
+                return;
+            }
+
+            feedback.textContent = "Opening GitHub in the current tab.";
+            window.location.href = issueUrl;
         });
 
         renderPage();

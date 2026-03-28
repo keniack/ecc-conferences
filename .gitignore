@@ -21,3 +21,4 @@ Thumbs.db
 
 # Ignore generated automation reports
 .github/conference-agent-report.md
+.github/conference-submission-report.md

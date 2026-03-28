@@ -14,6 +14,7 @@ This repository tracks **major Edge and Cloud computing conferences**, including
 ✔️ **Sorted by Submission Deadline**  
 ✔️ **Days to Submission Countdown**  
 ✔️ **Ranks & Conference Details**  
+✔️ **Homepage Submission Form** that opens a PR through GitHub Actions  
 
 ---
 
@@ -21,6 +22,11 @@ This repository tracks **major Edge and Cloud computing conferences**, including
 
 To contribute, update the **`_data/conferences.yaml`** file with new or modified conference details.  
 After editing, commit and push your changes, then submit a **pull request**.
+
+You can also use the **Add a conference** form on the homepage. It opens a structured GitHub issue,
+and a workflow converts that issue into a PR against **`_data/conferences.yaml`**.
+That form only asks for a conference name or acronym plus a public URL. The workflow then tries to enrich
+the rest of the fields automatically and falls back to safe placeholder defaults when it cannot extract them yet.
 
 ## 💻 Run Locally
 
@@ -83,6 +89,9 @@ What it does:
 - Uses an LLM to extract structured dates and location data
 - Opens a pull request instead of pushing directly to `main`
 
+This repo also has a separate issue-to-PR workflow for manual conference submissions from the homepage form.
+It attempts to fill missing metadata from the submitted page before opening the PR.
+
 The updater is intentionally conservative. It only auto-edits these fields:
 
 - `submission_deadline`
@@ -98,13 +107,17 @@ Add these repository settings before enabling the workflow:
 
 1. Repository secret: `OPENAI_API_KEY`
 2. Optional repository variable: `OPENAI_MODEL`
-   Default: `gpt-4.1-mini`
+   Default: `gemini-2.5-flash`
 3. Optional repository variable: `OPENAI_BASE_URL`
-   Only needed if you want an OpenAI-compatible endpoint instead of the default API URL
+   Default: `https://generativelanguage.googleapis.com/v1beta/openai`
 4. Workflow permissions: set GitHub Actions to `Read and write permissions`
+5. Keep GitHub Issues enabled if you want homepage conference submissions to open PRs automatically
 
-The workflow file lives at **`.github/workflows/conference-agent.yml`** and runs weekly,
+The updater workflow lives at **`.github/workflows/conference-agent.yml`** and runs daily,
 plus on manual dispatch.
+
+The homepage submission workflow lives at **`.github/workflows/conference-submission.yml`**.
+It listens for structured GitHub issues created from the site and opens a PR with the proposed conference entry.
 
 ### Local Run
 
