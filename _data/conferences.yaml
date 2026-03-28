@@ -1,492 +1,442 @@
 conferences:
-  - name: "IEEE International Conference on eScience"
-    acronym: "eScience"
-    ranking: "Unknown"
-    submission_deadline: "18.05.2026"
-    notification: "29.06.2026"
-    conference_start: "28.09.2026"
-    conference_end: "02.10.2026"
-    location: "Naples, Italy"
-    website: "https://www.escience-conference.org/2026/call-for-papers"
-    
-  - name: "IEEE International Conference on Autonomic Computing and Self-Organizing Systems"
-    acronym: "ACSOS"
-    ranking: "Unknown"
-    submission_deadline: "03.05.2026"
-    notification: "28.06.2026"
-    conference_start: "29.09.2026"
-    conference_end: "03.10.2026"
-    location: "Cesena, Italy"
-    website: "https://2026.acsos.org/"
-    
-  - name: "IEEE Global Congress on Emerging Technologies"
-    acronym: "GCET2025"
-    ranking: "Unknown"
-    submission_deadline: "25.10.2025"
-    notification: "01.03.2026"
-    conference_start: "02.12.2025"
-    conference_end: "05.12.2025"
-    location: "Lyon, France"
-    website: "https://www.gcet-conference.com/GCET2025/index.php"
-    
-  - name: "IEEE Symposium on Computers and Communications"
-    acronym: "ISCC"
-    ranking: "C"
-    submission_deadline: "15.02.2026"
-    notification: "20.03.2026"
-    conference_start: "23.06.2026"
-    conference_end: "26.06.2026"
-    location: "Algarve, Portugal"
-    website: "https://ieee-iscc.computer.org/2026/"
-    
-  - name: "IEEE International Conference on Synergies in Next-Generation Cyber-Physical Systems"
-    acronym: "SNGC"
-    ranking: "Unknown"
-    submission_deadline: "15.04.2026"
-    notification: "12.06.2026"
-    conference_start: "16.09.2026"
-    conference_end: "18.09.2026"
-    location: "Cardiff, UK"
-    website: "https://www.sngc-conf.co.uk/"
-    
-  - name: "IEEE International Conference on Fog and Edge Computing"
-    acronym: "ICFEC"
-    ranking: "Unknown"
-    submission_deadline: "18.01.2026"
-    notification: "16.02.2026"
-    conference_start: "18.05.2026"
-    conference_end: "21.05.2026"
-    location: "Sidney, Australia"
-    website: "https://icfec2026.hanyang.ac.kr/"
-    
-  - name: "IEEE International Conference on Parallel and Distributed Systems"
-    acronym: "ICPADS"
-    ranking: "C"
-    submission_deadline: "31.08.2025"
-    notification: "01.10.2025"
-    conference_start: "14.12.2025"
-    conference_end: "18.12.2025"
-    location: "Hefei, China"
-    website: "http://ieee-icpads.org.cn/icpads2025.html"
-
-  - name: "ACM Symposium On Applied Computing"
-    acronym: "ACM SAC"
-    ranking: "B"
-    submission_deadline: "17.10.2025"
-    notification: "21.11.2025"
-    conference_start: "23.03.2026"
-    conference_end: "27.03.2026"
-    location: "Thessaloniki, Greece"
-    website: "https://www.sigapp.org/sac/sac2026/index.php"
-
-  - name: "International Performance Computing and Communications Conference"
-    acronym: "IPCCC"
-    ranking: "C"
-    submission_deadline: "07.07.2025"
-    notification: "20.08.2025"
-    conference_start: "21.11.2025"
-    conference_end: "23.11.2025"
-    location: "Austin, Texas, USA"
-    website: "https://www.ipccc.org/"
-    
-  - name: "International Symposium on Cluster, Cloud, and Internet Computing"
-    acronym: "CCGRID"
-    ranking: "B"
-    submission_deadline: "21.12.2025"
-    notification: "10.02.2026"
-    conference_start: "18.05.2026"
-    conference_end: "21.05.2026"
-    location: "Sidney, Australia"
-    website: "https://ccgrid2026.cdms.westernsydney.edu.au/"
-    
-  - name: "International Conference on Parallel, Distributed, and Network-based Processing"
-    acronym: "PDP"
-    ranking: "C"
-    submission_deadline: "09.11.2025"
-    notification: "07.12.2025"
-    conference_start: "25.03.2026"
-    conference_end: "27.03.2026"
-    location: "Cluj-Napoca, Romania"
-    website: "https://pdp2026.org/"
-    
-  - name: "IEEE/ACM International Symposium on Quality of Service"
-    acronym: "IWQoS"
-    ranking: "B"
-    submission_deadline: "23.02.2026"
-    notification: "30.04.2026"
-    conference_start: "29.07.2026"
-    conference_end: "02.07.2026"
-    location: "Dubai, United Arab Emirates"
-    website: "https://iwqos2026.ieee-iwqos.org/call-papers"
-    
-  - name: "IEEE International Symposium on Workload Characterization"
-    acronym: "IISWC"
-    ranking: "Unknown"
-    submission_deadline: "21.05.2026"
-    notification: "06.07.2026"
-    conference_start: "27.09.2026"
-    conference_end: "29.09.2026"
-    location: "Boulder, USA"
-    website: "https://iiswc.org/iiswc2026/"
-
-  - name: "International Conference on Mobility: Operations, Services, and Technologies"
-    acronym: "MOST"
-    ranking: "Unknown"
-    submission_deadline: "20.12.2025"
-    notification: "28.02.2026"
-    conference_start: "04.05.2026"
-    conference_end: "06.05.2026"
-    location: "Detroit, USA"
-    website: "https://ieeemobility.org/MOST2026/"
-    
-  - name: "International Conference on Cognitive Machine Intelligence"
-    acronym: "CogMi"
-    ranking: "Unknown"
-    submission_deadline: "29.08.2026"
-    notification: "29.09.2026"
-    conference_start: "04.11.2026"
-    conference_end: "06.11.2026"
-    location: "San Jose, CA, USA"
-    website: "https://www.sis.pitt.edu/lersais/conference/cogmi/2026/index.html"
-    
-  - name: "International Conference on Federated Learning Technologies and Applications"
-    acronym: "FLTA"
-    ranking: "Unknown"
-    submission_deadline: "01.06.2026"
-    notification: "29.07.2026"
-    conference_start: "14.10.2026"
-    conference_end: "17.10.2026"
-    location: "Paris, France"
-    website: "https://flta-conference.org/flta-2026/"
-    
-  - name: "International Conference on Dependable Systems and Their Applications"
-    acronym: "DSA"
-    ranking: "Unknown"
-    submission_deadline: "30.09.2025"
-    notification: "20.10.2025"
-    conference_start: "24.11.2025"
-    conference_end: "26.11.2025"
-    location: "Sharjah, UAE"
-    website: "https://dsa25.techconf.org/"
-    
-  - name: "International Conference on Service-Oriented System Engineering"
-    acronym: "SOSE"
-    ranking: "Unknown"
-    submission_deadline: "01.04.2026"
-    notification: "20.05.2026"
-    conference_start: "27.07.2026"
-    conference_end: "30.07.2026"
-    location: "Fukuoka, Japan"
-    website: "https://cisose.fit.ac.jp/sose/"
-
-  - name: "International Conference on Computer Communications and Networks"
-    acronym: "IC3N"
-    ranking: "B"
-    submission_deadline: "13.02.2026"
-    notification: "24.04.2026"
-    conference_start: "27.07.2026"
-    conference_end: "30.07.2026"
-    location: "Honolulu, Hawaii"
-    website: "http://www.icccn.org/ICCCN26/index.html"
-
-  - name: "International Conference on Cluster Computing"
-    acronym: "Cluster"
-    ranking: "B"
-    submission_deadline: "02.05.2026"
-    notification: "04.07.2026"
-    conference_start: "22.09.2026"
-    conference_end: "26.09.2026"
-    location: "Alexandria, Virginia, USA"
-    website: "https://clustercomp.org/2026/"
-
-  - name: "International Conference on Distributed Computing in Smart Systems and the Internet of Things"
-    acronym: "DCOSS-IoT"
-    ranking: "B"
-    submission_deadline: "11.02.2026"
-    notification: "28.03.2026"
-    conference_start: "22.06.2026"
-    conference_end: "24.06.2026"
-    location: "Reykjavik, Iceland"
-    website: "https://dcoss.org/"
-
-  - name: "International Conference on Service-Oriented Computing"
-    acronym: "ICSOC"
-    ranking: "A"
-    submission_deadline: "21.07.2026"
-    notification: "15.09.2026"
-    conference_start: "01.12.2026"
-    conference_end: "04.12.2026"
-    location: "Lodz, Poland"
-    website: "https://icsoc2026.it.p.lodz.pl/"
-    
-  - name: "IEEE Conference on Local Computer Networks"
-    acronym: "LCN"
-    ranking: "C"
-    submission_deadline: "20.04.2026"
-    notification: "29.06.2026"
-    conference_start: "07.10.2026"
-    conference_end: "09.10.2026"
-    location: "Coimbra, Portugal"
-    website: "https://www.ieeelcn.org/Author_CfP.html"
-    
-  - name: "ACM International Conference on Performance Engineering"
-    acronym: "ICPE"
-    ranking: "B"
-    submission_deadline: "10.11.2025"
-    notification: "19.01.2025"
-    conference_start: "04.05.2026"
-    conference_end: "08.05.2026"
-    location: "Florence, Italy"
-    website: "https://icpe2026.spec.org/"
-
-  - name: "ACM International Symposium on High Performance Distributed Computing"
-    acronym: "HPDC"
-    ranking: "A"
-    submission_deadline: "05.02.2026"
-    notification: "31.03.2026"
-    conference_start: "13.07.2026"
-    conference_end: "16.07.2026"
-    location: "Cleveland, OH, USA"
-    website: "https://hpdc.sci.utah.edu/2026/"
-
-  - name: "International Conference on Cloud Computing Technology and Science"
-    acronym: "CloudCom"
-    ranking: "C"
-    submission_deadline: "15.07.2026"
-    notification: "15.09.2026"
-    conference_start: "27.10.2026"
-    conference_end: "29.10.2026"
-    location: "Paris, France"
-    website: "https://cloudcom2026.org/call-for-papers"
-
-  - name: "IEEE International Symposium on Real-Time Distributed Computing"
-    acronym: "ISORC"
-    ranking: "C"
-    submission_deadline: "01.03.2026"
-    notification: "24.03.2026"
-    conference_start: "27.05.2026"
-    conference_end: "29.05.2026"
-    location: "Hamilton, Canada"
-    website: "https://mcscert.github.io/isorc2026"
-
-  - name: "IEEE International Parallel and Distributed Processing Symposium"
-    acronym: "IPDPS"
-    ranking: "A"
-    submission_deadline: "09.10.2025"
-    notification: "04.02.2026"
-    conference_start: "25.05.2026"
-    conference_end: "29.05.2026"
-    location: "New Orleans, USA"
-    website: "https://www.ipdps.org/"
-
-  - name: "IEEE International Conference on Pervasive Computing and Communications"
-    acronym: "PERCOM"
-    ranking: "A"
-    submission_deadline: "19.09.2025"
-    notification: "05.12.2025"
-    conference_start: "16.03.2026"
-    conference_end: "20.03.2026"
-    location: "Pisa, Italy"
-    website: "https://www.percom.org/call-for-papers/"
-
-  - name: "International Conference on Distributed Computing Systems"
-    acronym: "ICDCS"
-    ranking: "A"
-    submission_deadline: "14.01.2026"
-    notification: "02.04.2026"
-    conference_start: "20.07.2026"
-    conference_end: "23.07.2026"
-    location: "South Korea"
-    website: "https://icdcs2026.icdcs.org/"
-
-  - name: "IEEE BigComp"
-    acronym: "BigComp"
-    ranking: "Unknown"
-    submission_deadline: "31.10.2025"
-    notification: "28.11.2025"
-    conference_start: "02.02.2026"
-    conference_end: "05.02.2026"
-    location: "Guangzhou, China"
-    website: "https://www.bigcomputing.org/"
-
-  - name: "International Conference on Smart Computing"
-    acronym: "SmartComp"
-    ranking: "B"
-    submission_deadline: "16.02.2026"
-    notification: "15.04.2025"
-    conference_start: "22.06.2025"
-    conference_end: "25.06.2025"
-    location: "Messina, Italy"
-    website: "https://portale2.unime.it/smartcomp2026/"
-
-  - name: "ACM International Conference on the Internet of Things"
-    acronym: "IoT"
-    ranking: "Unknown"
-    submission_deadline: "01.08.2026"
-    notification: "03.09.2026"
-    conference_start: "19.11.2026"
-    conference_end: "21.11.2026"
-    location: "Newcastle, England, UK"
-    website: "https://iot-conference.org/iot2026"
-
-  - name: "IEEE Latin American International Conference on the Internet of Things"
-    acronym: "LC-IoT"
-    ranking: "Unknown"
-    submission_deadline: "16.12.2025"
-    notification: "13.01.2026"
-    conference_start: "19.03.2026"
-    conference_end: "21.03.2026"
-    location: "Bogotá, Colombia"
-    website: "https://lciot2026.iot.ieee.org/"
-
-  - name: "ACM/IFIP/USENIX International Middleware Conference"
-    acronym: "MIDDLEWARE"
-    ranking: "A"
-    submission_deadline: "05.06.2026"
-    notification: "28.08.2026"
-    conference_start: "30.11.2026"
-    conference_end: "04.12.2026"
-    location: "Tarragona, Spain"
-    website: "https://middleware-conf.github.io/2026/"
-
-  - name: "IEEE COMPSAC Symposium on Smart IoT Systems & Applications (SIoT)"
-    acronym: "COMPSAC"
-    ranking: "B"
-    submission_deadline: "10.02.2026"
-    notification: "01.04.2026"
-    conference_start: "07.07.2026"
-    conference_end: "10.07.2026"
-    location: "Madrid, Spain"
-    website: "https://ieeecompsac.computer.org/2026/compsac-2026-symposium-on-smart-iot-systems-applications-siot-iot-based-scientific-research/"
-
-  - name: "IEEE International Symposium on Computer Architecture and High Performance Computing"
-    acronym: "SBAC-PAD"
-    ranking: "B"
-    submission_deadline: "09.07.2026"
-    notification: "03.08.2026"
-    conference_start: "14.10.2026"
-    conference_end: "16.10.2026"
-    location: "Madrid, Spain"
-    website: "https://coco-arcos.github.io/sbac-pad2026/"
- 
-  - name: "Eurosys Conference"
-    acronym: "EuroSys"
-    ranking: "A"
-    submission_deadline: "25.09.2025"
-    notification: "30.10.2026"
-    conference_start: "13.04.2026"
-    conference_end: "16.04.2026"
-    location: "Edinburgh, UK"
-    website: "https://2026.eurosys.org/"
-
-  - name: "IEEE Services"
-    acronym: "Services"
-    ranking: "A/B"
-    submission_deadline: "08.03.2026"
-    notification: "10.05.2026"
-    conference_start: "13.07.2026"
-    conference_end: "18.07.2026"
-    location: "Sidney, Australia"
-    website: "https://services.conferences.computer.org/2026/"
-
-
-  - name: "ACM International Conference on Architectural Support for Programming Languages and Operating Systems"
-    acronym: "ASPLOS"
-    ranking: "A*"
-    submission_deadline: "20.08.2025"
-    notification: "24.11.2025"
-    conference_start: "22.03.2026"
-    conference_end: "26.03.2026"
-    location: "Pittsburgh, USA"
-    website: "https://www.asplos-conference.org/asplos2026/cfp/"
-
-  - name: "European conference on parallel and distributed processing"
-    acronym: "Euro-Par"
-    ranking: "B"
-    submission_deadline: "06.03.2026"
-    notification: "30.04.2025"
-    conference_start: "24.08.2025"
-    conference_end: "28.08.2025"
-    location: "Pisa, Italy"
-    website: "https://2026.euro-par.org/"
-
-  - name: "International Conference on Future Internet of Things and Cloud"
-    acronym: "FiCloud"
-    ranking: "Unknown"
-    submission_deadline: "25.03.2026"
-    notification: "15.05.2026"
-    conference_start: "20.07.2026"
-    conference_end: "22.07.2026"
-    location: "Granada, Spain"
-    website: "https://ficloud.org/2026"
-
-  - name: "IEEE International Conference on Cloud Engineering"
-    acronym: "IC2E"
-    ranking: "Unknown"
-    submission_deadline: "24.04.2026"
-    notification: "23.06.2026"
-    conference_start: "13.10.2026"
-    conference_end: "16.10.2026"
-    location: "San Jose, California, USA"
-    website: "https://conferences.computer.org/IC2E/2026/"
-
-  - name: "ACM/IEEE Symposium on Edge Computing"
-    acronym: "SEC"
-    ranking: "Unknown"
-    submission_deadline: "01.05.2026"
-    notification: "29.07.2026"
-    conference_start: "13.10.2026"
-    conference_end: "16.10.2026"
-    location: "Santa Clara, California, USA"
-    website: "https://acm-ieee-sec.org/2026/"
-
-  - name: "ACM International Conference on Distributed and Event-based Systems"
-    acronym: "DEBS"
-    ranking: "Unknown"
-    submission_deadline: "01.03.2026"
-    notification: "18.04.2026"
-    conference_start: "23.06.2026"
-    conference_end: "26.06.2026"
-    location: "Lisbon, Portugal"
-    website: "https://2026.debs.org/"
-
-  - name: "ACM Symposium on Cloud Computing"
-    acronym: "SoCC"
-    ranking: "Unknown"
-    submission_deadline: "14.07.2026"
-    notification: "26.09.2026"
-    conference_start: "18.11.2026"
-    conference_end: "20.11.2026"
-    location: "Singapore"
-    website: "https://acmsocc.org/2026"
-
-  - name: "Utility and Cloud Computing"
-    acronym: "UCC"
-    ranking: "Unknown"
-    submission_deadline: "19.09.2026"
-    notification: "07.10.2026"
-    conference_start: "01.12.2026"
-    conference_end: "04.12.2026"
-    location: "Florianopolis, Brazil"
-    website: "https://ucc-conference.org/"
-
-  - name: "IEEE International Conference on Big Data"
-    acronym: "BigData"
-    ranking: "B"
-    submission_deadline: "21.08.2026"
-    notification: "24.10.2026"
-    conference_start: "14.12.2026"
-    conference_end: "17.12.2026"
-    location: "Phoenix, Arizona, USA"
-    website: "https://events.engineering.asu.edu/ieee-bigdata-2026/"
-
-  - name: "Symposium and Summer School On Service-Oriented Computing"
-    acronym: "SummerSoc"
-    ranking: "Unknown"
-    submission_deadline: "10.04.2026"
-    notification: "01.05.2026"
-    conference_start: "29.07.2026"
-    conference_end: "04.07.2026"
-    location: "Heraklion, Crete"
-    website: "https://www.summersoc.eu/"
-
+- name: IEEE International Conference on eScience
+  acronym: eScience
+  ranking: Unknown
+  submission_deadline: 18.05.2026
+  notification: 29.06.2026
+  conference_start: 28.09.2026
+  conference_end: 02.10.2026
+  location: Naples, Italy
+  website: https://www.escience-conference.org/2026/call-for-papers
+- name: IEEE International Conference on Autonomic Computing and Self-Organizing Systems
+  acronym: ACSOS
+  ranking: Unknown
+  submission_deadline: 17.04.2026
+  notification: 15.06.2026
+  conference_start: 07.09.2026
+  conference_end: 11.09.2026
+  location: Cesena, Italy
+  website: https://2026.acsos.org/
+- name: IEEE Global Congress on Emerging Technologies
+  acronym: GCET2025
+  ranking: Unknown
+  submission_deadline: 25.10.2025
+  notification: 01.03.2026
+  conference_start: 02.12.2025
+  conference_end: 05.12.2025
+  location: Lyon, France
+  website: https://www.gcet-conference.com/GCET2025/index.php
+- name: IEEE Symposium on Computers and Communications
+  acronym: ISCC
+  ranking: C
+  submission_deadline: 15.02.2026
+  notification: 20.03.2026
+  conference_start: 23.06.2026
+  conference_end: 26.06.2026
+  location: Algarve, Portugal
+  website: https://ieee-iscc.computer.org/2026/
+- name: IEEE International Conference on Synergies in Next-Generation Cyber-Physical Systems
+  acronym: SNGC
+  ranking: Unknown
+  submission_deadline: 15.04.2026
+  notification: 12.06.2026
+  conference_start: 16.09.2026
+  conference_end: 18.09.2026
+  location: Cardiff, UK
+  website: https://www.sngc-conf.co.uk/
+- name: IEEE International Conference on Fog and Edge Computing
+  acronym: ICFEC
+  ranking: Unknown
+  submission_deadline: 18.01.2026
+  notification: 23.02.2026
+  conference_start: 18.05.2026
+  conference_end: 21.05.2026
+  location: Sydney, Australia
+  website: https://icfec2026.hanyang.ac.kr/
+- name: IEEE International Conference on Parallel and Distributed Systems
+  acronym: ICPADS
+  ranking: C
+  submission_deadline: 31.08.2025
+  notification: 01.10.2025
+  conference_start: 14.12.2025
+  conference_end: 18.12.2025
+  location: Hefei, China
+  website: http://ieee-icpads.org.cn/icpads2025.html
+- name: ACM Symposium On Applied Computing
+  acronym: ACM SAC
+  ranking: B
+  submission_deadline: 17.10.2025
+  notification: 21.11.2025
+  conference_start: 23.03.2026
+  conference_end: 27.03.2026
+  location: Thessaloniki, Greece
+  website: https://www.sigapp.org/sac/sac2026/index.php
+- name: International Performance Computing and Communications Conference
+  acronym: IPCCC
+  ranking: C
+  submission_deadline: 07.07.2025
+  notification: 20.08.2025
+  conference_start: 21.11.2025
+  conference_end: 23.11.2025
+  location: Austin, Texas, USA
+  website: https://www.ipccc.org/
+- name: International Symposium on Cluster, Cloud, and Internet Computing
+  acronym: CCGRID
+  ranking: B
+  submission_deadline: 21.12.2025
+  notification: 10.02.2026
+  conference_start: 18.05.2026
+  conference_end: 21.05.2026
+  location: Sydney, Australia
+  website: https://ccgrid2026.cdms.westernsydney.edu.au/
+- name: International Conference on Parallel, Distributed, and Network-based Processing
+  acronym: PDP
+  ranking: C
+  submission_deadline: 09.11.2025
+  notification: 07.12.2025
+  conference_start: 25.03.2026
+  conference_end: 27.03.2026
+  location: Cluj-Napoca, Romania
+  website: https://pdp2026.org/
+- name: IEEE/ACM International Symposium on Quality of Service
+  acronym: IWQoS
+  ranking: B
+  submission_deadline: 23.02.2026
+  notification: 30.04.2026
+  conference_start: 29.06.2026
+  conference_end: 02.07.2026
+  location: Dubai, United Arab Emirates
+  website: https://iwqos2026.ieee-iwqos.org/call-papers
+- name: IEEE International Symposium on Workload Characterization
+  acronym: IISWC
+  ranking: Unknown
+  submission_deadline: 21.05.2026
+  notification: 06.07.2026
+  conference_start: 27.09.2026
+  conference_end: 29.09.2026
+  location: Boulder, USA
+  website: https://iiswc.org/iiswc2026/
+- name: 'International Conference on Mobility: Operations, Services, and Technologies'
+  acronym: MOST
+  ranking: Unknown
+  submission_deadline: 20.12.2025
+  notification: 28.02.2026
+  conference_start: 04.05.2026
+  conference_end: 06.05.2026
+  location: Detroit, USA
+  website: https://ieeemobility.org/MOST2026/
+- name: International Conference on Cognitive Machine Intelligence
+  acronym: CogMi
+  ranking: Unknown
+  submission_deadline: 29.08.2026
+  notification: 29.09.2026
+  conference_start: 04.11.2026
+  conference_end: 06.11.2026
+  location: San Jose, CA, USA
+  website: https://www.sis.pitt.edu/lersais/conference/cogmi/2026/index.html
+- name: International Conference on Federated Learning Technologies and Applications
+  acronym: FLTA
+  ranking: Unknown
+  submission_deadline: 01.06.2026
+  notification: 29.07.2026
+  conference_start: 14.10.2026
+  conference_end: 17.10.2026
+  location: Paris, France
+  website: https://flta-conference.org/flta-2026/
+- name: International Conference on Dependable Systems and Their Applications
+  acronym: DSA
+  ranking: Unknown
+  submission_deadline: 30.09.2025
+  notification: 20.10.2025
+  conference_start: 24.11.2025
+  conference_end: 26.11.2025
+  location: Sharjah, UAE
+  website: https://dsa25.techconf.org/
+- name: International Conference on Service-Oriented System Engineering
+  acronym: SOSE
+  ranking: Unknown
+  submission_deadline: 01.04.2026
+  notification: 20.05.2026
+  conference_start: 27.07.2026
+  conference_end: 30.07.2026
+  location: Fukuoka, Japan
+  website: https://cisose.fit.ac.jp/sose/
+- name: International Conference on Computer Communications and Networks
+  acronym: IC3N
+  ranking: B
+  submission_deadline: 13.02.2026
+  notification: 24.04.2026
+  conference_start: 27.07.2026
+  conference_end: 30.07.2026
+  location: Honolulu, Hawaii
+  website: http://www.icccn.org/ICCCN26/index.html
+- name: International Conference on Cluster Computing
+  acronym: Cluster
+  ranking: B
+  submission_deadline: 02.05.2026
+  notification: 04.07.2026
+  conference_start: 22.09.2026
+  conference_end: 25.09.2026
+  location: Alexandria, Virginia, United States of America
+  website: https://clustercomp.org/2026/
+- name: International Conference on Distributed Computing in Smart Systems and the Internet of Things
+  acronym: DCOSS-IoT
+  ranking: B
+  submission_deadline: 08.02.2026
+  notification: 28.03.2026
+  conference_start: 22.06.2026
+  conference_end: 24.06.2026
+  location: Reykjavik, Iceland
+  website: https://dcoss.org/
+- name: International Conference on Service-Oriented Computing
+  acronym: ICSOC
+  ranking: A
+  submission_deadline: 21.07.2026
+  notification: 15.09.2026
+  conference_start: 01.12.2026
+  conference_end: 04.12.2026
+  location: Lodz, Poland
+  website: https://icsoc2026.it.p.lodz.pl/
+- name: IEEE Conference on Local Computer Networks
+  acronym: LCN
+  ranking: C
+  submission_deadline: 20.04.2026
+  notification: 29.06.2026
+  conference_start: 07.10.2026
+  conference_end: 09.10.2026
+  location: Coimbra, Portugal
+  website: https://www.ieeelcn.org/Author_CfP.html
+- name: ACM International Conference on Performance Engineering
+  acronym: ICPE
+  ranking: B
+  submission_deadline: 10.11.2025
+  notification: 19.01.2025
+  conference_start: 04.05.2026
+  conference_end: 08.05.2026
+  location: Florence, Italy
+  website: https://icpe2026.spec.org/
+- name: ACM International Symposium on High Performance Distributed Computing
+  acronym: HPDC
+  ranking: A
+  submission_deadline: 05.02.2026
+  notification: 31.03.2026
+  conference_start: 13.07.2026
+  conference_end: 16.07.2026
+  location: Cleveland, OH, USA
+  website: https://hpdc.sci.utah.edu/2026/
+- name: International Conference on Cloud Computing Technology and Science
+  acronym: CloudCom
+  ranking: C
+  submission_deadline: 15.07.2026
+  notification: 15.09.2026
+  conference_start: 27.10.2026
+  conference_end: 29.10.2026
+  location: Paris, France
+  website: https://easychair.org/cfp/cloudcom2026
+- name: IEEE International Symposium on Real-Time Distributed Computing
+  acronym: ISORC
+  ranking: C
+  submission_deadline: 01.03.2026
+  notification: 24.03.2026
+  conference_start: 27.05.2026
+  conference_end: 29.05.2026
+  location: Hamilton, Canada
+  website: https://mcscert.github.io/isorc2026
+- name: IEEE International Parallel and Distributed Processing Symposium
+  acronym: IPDPS
+  ranking: A
+  submission_deadline: 09.10.2025
+  notification: 04.02.2026
+  conference_start: 25.05.2026
+  conference_end: 29.05.2026
+  location: New Orleans, USA
+  website: https://www.ipdps.org/
+- name: IEEE International Conference on Pervasive Computing and Communications
+  acronym: PERCOM
+  ranking: A
+  submission_deadline: 19.09.2025
+  notification: 05.12.2025
+  conference_start: 16.03.2026
+  conference_end: 20.03.2026
+  location: Pisa, Italy
+  website: https://www.percom.org/call-for-papers/
+- name: International Conference on Distributed Computing Systems
+  acronym: ICDCS
+  ranking: A
+  submission_deadline: 21.01.2026
+  notification: 15.04.2026
+  conference_start: 22.06.2026
+  conference_end: 25.06.2026
+  location: Seoul, South Korea
+  website: https://icdcs2026.icdcs.org/
+- name: IEEE BigComp
+  acronym: BigComp
+  ranking: Unknown
+  submission_deadline: 31.10.2025
+  notification: 28.11.2025
+  conference_start: 02.02.2026
+  conference_end: 05.02.2026
+  location: Guangzhou, China
+  website: https://www.bigcomputing.org/
+- name: International Conference on Smart Computing
+  acronym: SmartComp
+  ranking: B
+  submission_deadline: 16.02.2026
+  notification: 15.04.2026
+  conference_start: 22.06.2026
+  conference_end: 25.06.2026
+  location: Messina, Italy
+  website: https://portale2.unime.it/smartcomp2026/
+- name: ACM International Conference on the Internet of Things
+  acronym: IoT
+  ranking: Unknown
+  submission_deadline: 01.08.2026
+  notification: 03.09.2026
+  conference_start: 19.11.2026
+  conference_end: 21.11.2026
+  location: Newcastle, England, UK
+  website: https://iot-conference.org/iot2026
+- name: IEEE Latin American International Conference on the Internet of Things
+  acronym: LC-IoT
+  ranking: Unknown
+  submission_deadline: 16.12.2025
+  notification: 13.01.2026
+  conference_start: 19.03.2026
+  conference_end: 21.03.2026
+  location: "Bogot\xE1, Colombia"
+  website: https://lciot2026.iot.ieee.org/
+- name: ACM/IFIP/USENIX International Middleware Conference
+  acronym: MIDDLEWARE
+  ranking: A
+  submission_deadline: 05.06.2026
+  notification: 28.08.2026
+  conference_start: 14.12.2026
+  conference_end: 18.12.2026
+  location: Universitat Rovira i Virgili, Tarragona, Spain
+  website: https://middleware-conf.github.io/2026/
+- name: IEEE COMPSAC Symposium on Smart IoT Systems & Applications (SIoT)
+  acronym: COMPSAC
+  ranking: B
+  submission_deadline: 20.02.2026
+  notification: 01.04.2026
+  conference_start: 07.07.2026
+  conference_end: 10.07.2026
+  location: Madrid, Spain
+  website: https://ieeecompsac.computer.org/2026/compsac-2026-symposium-on-smart-iot-systems-applications-siot-iot-based-scientific-research/
+- name: IEEE International Symposium on Computer Architecture and High Performance Computing
+  acronym: SBAC-PAD
+  ranking: B
+  submission_deadline: 09.07.2026
+  notification: 03.08.2026
+  conference_start: 14.10.2026
+  conference_end: 16.10.2026
+  location: Madrid, Spain
+  website: https://coco-arcos.github.io/sbac-pad2026/
+- name: Eurosys Conference
+  acronym: EuroSys
+  ranking: A
+  submission_deadline: 25.09.2025
+  notification: 30.10.2026
+  conference_start: 13.04.2026
+  conference_end: 16.04.2026
+  location: Edinburgh, UK
+  website: https://2026.eurosys.org/
+- name: IEEE Services
+  acronym: Services
+  ranking: A/B
+  submission_deadline: 08.03.2026
+  notification: 10.05.2026
+  conference_start: 13.07.2026
+  conference_end: 18.07.2026
+  location: Sidney, Australia
+  website: https://services.conferences.computer.org/2026/
+- name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
+  acronym: ASPLOS
+  ranking: A*
+  submission_deadline: 20.08.2025
+  notification: 24.11.2025
+  conference_start: 22.03.2026
+  conference_end: 26.03.2026
+  location: Pittsburgh, USA
+  website: https://www.asplos-conference.org/asplos2026/cfp/
+- name: European conference on parallel and distributed processing
+  acronym: Euro-Par
+  ranking: B
+  submission_deadline: 06.03.2026
+  notification: 30.04.2025
+  conference_start: 24.08.2025
+  conference_end: 28.08.2025
+  location: Pisa, Italy
+  website: https://2026.euro-par.org/
+- name: International Conference on Future Internet of Things and Cloud
+  acronym: FiCloud
+  ranking: Unknown
+  submission_deadline: 25.03.2026
+  notification: 15.05.2026
+  conference_start: 20.07.2026
+  conference_end: 22.07.2026
+  location: Granada, Spain
+  website: https://ficloud.org/2026
+- name: IEEE International Conference on Cloud Engineering
+  acronym: IC2E
+  ranking: Unknown
+  submission_deadline: 24.04.2026
+  notification: 23.06.2026
+  conference_start: 13.10.2026
+  conference_end: 16.10.2026
+  location: San Jose, California, USA
+  website: https://conferences.computer.org/IC2E/2026/
+- name: ACM/IEEE Symposium on Edge Computing
+  acronym: SEC
+  ranking: Unknown
+  submission_deadline: 01.05.2026
+  notification: 29.07.2026
+  conference_start: 13.10.2026
+  conference_end: 16.10.2026
+  location: Santa Clara, California, USA
+  website: https://acm-ieee-sec.org/2026/
+- name: ACM International Conference on Distributed and Event-based Systems
+  acronym: DEBS
+  ranking: Unknown
+  submission_deadline: 01.03.2026
+  notification: 18.04.2026
+  conference_start: 23.06.2026
+  conference_end: 26.06.2026
+  location: Lisbon, Portugal
+  website: https://2026.debs.org/
+- name: ACM Symposium on Cloud Computing
+  acronym: SoCC
+  ranking: Unknown
+  submission_deadline: 14.07.2026
+  notification: 26.09.2026
+  conference_start: 18.11.2026
+  conference_end: 20.11.2026
+  location: Singapore
+  website: https://acmsocc.org/2026
+- name: Utility and Cloud Computing
+  acronym: UCC
+  ranking: Unknown
+  submission_deadline: 19.09.2026
+  notification: 07.10.2026
+  conference_start: 01.12.2026
+  conference_end: 04.12.2026
+  location: Florianopolis, Brazil
+  website: https://ucc-conference.org/
+- name: IEEE International Conference on Big Data
+  acronym: BigData
+  ranking: B
+  submission_deadline: 21.08.2026
+  notification: 24.10.2026
+  conference_start: 14.12.2026
+  conference_end: 17.12.2026
+  location: Phoenix, Arizona, USA
+  website: https://events.engineering.asu.edu/ieee-bigdata-2026/
+- name: Symposium and Summer School On Service-Oriented Computing
+  acronym: SummerSoc
+  ranking: Unknown
+  submission_deadline: 10.04.2026
+  notification: 01.05.2026
+  conference_start: 29.07.2026
+  conference_end: 04.07.2026
+  location: Heraklion, Crete
+  website: https://www.summersoc.eu/
