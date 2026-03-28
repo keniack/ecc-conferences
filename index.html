@@ -1,141 +1,631 @@
 ---
-layout: default
-title: EC Conferences
 ---
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/mic.ico">
-    <title>Edge and Cloud Conferences CFP</title>
+    <meta name="description" content="Track edge and cloud conference CFP deadlines, notifications, and conference dates.">
+    <link rel="icon" type="image/x-icon" href="{{ '/mic.ico' | relative_url }}">
+    <title>Edge and Cloud Conferences CFP Tracker</title>
     <style>
+        :root {
+            --primary: #3b5998;
+            --primary-dark: #30497f;
+            --primary-soft: #e8eefb;
+            --accent: #5a78b8;
+            --page-bg: #f5f7fb;
+            --card-bg: #ffffff;
+            --text: #233043;
+            --muted: #66768a;
+            --line: #dbe3f0;
+            --shadow: 0 8px 24px rgba(34, 54, 90, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Open Sans', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
         }
-        .header {
-            background-color: #3b5998;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
+
+        a {
+            color: inherit;
         }
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+        .hero {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            padding: 40px 20px 34px;
         }
-        h2 {
-            color: #3b5998;
-            border-bottom: 2px solid #3b5998;
-            padding-bottom: 5px;
+
+        .hero-inner,
+        .content,
+        .footer {
+            width: min(960px, calc(100% - 24px));
+            margin: 0 auto;
         }
-        .conference-item {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            transition: background-color 0.3s;
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(1.9rem, 4vw, 2.5rem);
+            line-height: 1.15;
+        }
+
+        .hero p {
+            margin: 12px 0 0;
+            max-width: 640px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-links {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
         }
-        .conference-item:hover {
-            background-color: #f2f2f2;
-        }
-        .conference-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #007BFF;
+
+        .hero-link {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
             text-decoration: none;
-            display: block;
-            margin-bottom: 5px;
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
+
+        .hero-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .content {
+            padding: 26px 0 48px;
+        }
+
+        .summary {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 180px;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding: 16px 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .filter-field input,
+        .filter-field select {
+            width: 100%;
+            min-height: 42px;
+            padding: 0 12px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .results-note {
+            margin: 0 0 6px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .summary-card {
+            flex: 1 1 180px;
+            background: var(--card-bg);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card strong {
+            display: block;
+            font-size: 1.55rem;
+            color: var(--primary);
+        }
+
+        .summary-card span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .section {
+            margin-top: 22px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .section-header-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.45rem;
+            color: var(--primary);
+        }
+
+        .section-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .section-toggle {
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--card-bg);
+            color: var(--primary);
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .section-toggle:hover {
+            background: var(--primary-soft);
+        }
+
+        .conference-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .conference-list.is-collapsed {
+            display: none;
+        }
+
+        .conference-item {
+            background: var(--card-bg);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .conference-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 28px rgba(34, 54, 90, 0.1);
+            border-color: #c7d4ea;
+        }
+
+        .conference-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .conference-title {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
         .conference-title:hover {
             text-decoration: underline;
         }
+
+        .conference-title strong {
+            display: block;
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        .conference-title span {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 82px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
         .conference-meta {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 16px;
+            margin-top: 16px;
+        }
+
+        .meta-block {
+            padding: 12px 13px;
+            border-radius: 12px;
+            background: #f8faff;
+            border: 1px solid #edf2fa;
+        }
+
+        .meta-block label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .meta-block span {
+            display: block;
+            font-size: 0.93rem;
+            line-height: 1.45;
+        }
+
+        .empty-state {
+            background: var(--card-bg);
+            border: 1px dashed #c6d3ea;
+            border-radius: 16px;
+            padding: 26px 18px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .footer {
+            padding: 0 0 36px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .footer p {
+            margin: 6px 0;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 720px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .conference-top,
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .conference-meta {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">Edge and Cloud Conferences CFP Tracker</div>
-    <div class="container">
-        
-        <h2>Upcoming Deadlines</h2>
-        <div id="upcoming-conferences"></div>
+    <header class="hero">
+        <div class="hero-inner">
+            <h1>Edge and Cloud Conferences CFP Tracker</h1>
+            <p>
+                A simple list of upcoming and past conference deadlines, notifications, rankings,
+                and conference dates for edge and cloud computing venues.
+            </p>
+            <div class="hero-links">
+                <a class="hero-link" href="https://github.com/keniack/ecc-conferences" target="_blank" rel="noreferrer">Source Code</a>
+                <a class="hero-link" href="https://github.com/keniack/ecc-conferences/graphs/contributors" target="_blank" rel="noreferrer">Contributors</a>
+            </div>
+        </div>
+    </header>
 
-        <br><br>
+    <main class="content">
+        <section class="summary" id="summary"></section>
 
-        <h2>Past Deadlines</h2>
-        <div id="past-conferences"></div>
+        <section class="filters" aria-label="Conference filters">
+            <div class="filter-field">
+                <label for="name-filter">Filter by name</label>
+                <input id="name-filter" type="search" placeholder="Search by conference name or acronym">
+            </div>
+            <div class="filter-field">
+                <label for="rank-filter">Filter by ranking</label>
+                <select id="rank-filter">
+                    <option value="all">All rankings</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="Unknown">Unknown</option>
+                </select>
+            </div>
+        </section>
 
-    </div>
+        <p class="results-note" id="results-note">Showing all conferences.</p>
 
-    <!-- Liquid: Convert YAML Data to JSON -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-header-main">
+                    <h2 id="upcoming-title">Upcoming Deadlines</h2>
+                    <button class="section-toggle" id="upcoming-toggle" type="button" aria-expanded="true">Hide</button>
+                </div>
+                <p>Sorted by nearest submission deadline</p>
+            </div>
+            <div class="conference-list" id="upcoming-conferences"></div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div class="section-header-main">
+                    <h2 id="past-title">Past Deadlines</h2>
+                    <button class="section-toggle" id="past-toggle" type="button" aria-expanded="false">Show</button>
+                </div>
+                <p>Older CFPs kept for reference</p>
+            </div>
+            <div class="conference-list is-collapsed" id="past-conferences"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>View the source data in <a href="https://github.com/keniack/ecc-conferences/blob/main/_data/conferences.yaml" target="_blank" rel="noreferrer">_data/conferences.yaml</a>.</p>
+        <p>Hosted on GitHub Pages.</p>
+    </footer>
+
     <script>
-    const conferences = {{ site.data.conferences.conferences | jsonify }};
+        const conferences = {{ site.data.conferences.conferences | jsonify }};
+        const state = {
+            query: "",
+            rank: "all",
+            collapsed: {
+                upcoming: false,
+                past: true
+            }
+        };
 
-    function parseDate(dateString) {
-        const [day, month, year] = dateString.split(".");
-        return new Date(`${year}-${month}-${day}`);
-    }
+        function parseDate(dateString) {
+            const [day, month, year] = dateString.split(".").map(Number);
+            return new Date(year, month - 1, day);
+        }
 
-    function renderConferences(sortedConferences, containerId, isUpcoming) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
+        function formatDate(dateString) {
+            const [day, month, year] = dateString.split(".");
+            const date = new Date(Number(year), Number(month) - 1, Number(day));
+            return new Intl.DateTimeFormat("en", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }).format(date);
+        }
 
-        // Reverse the past deadlines
-        const finalList = isUpcoming ? sortedConferences : sortedConferences.slice().reverse();
-
-        finalList.forEach(conference => {
-            const submissionDate = parseDate(conference.submission_deadline);
+        function getDaysToSubmission(dateString) {
             const today = new Date();
-            const daysToSubmission = Math.ceil((submissionDate - today) / (1000 * 60 * 60 * 24));
+            today.setHours(0, 0, 0, 0);
+            const submissionDate = parseDate(dateString);
+            submissionDate.setHours(0, 0, 0, 0);
+            return Math.ceil((submissionDate - today) / (1000 * 60 * 60 * 24));
+        }
 
-            if ((isUpcoming && daysToSubmission >= 0) || (!isUpcoming && daysToSubmission < 0)) {
-                const conferenceHTML = `
-                    <div class="conference-item">
-                        <a href="${conference.website}" target="_blank" class="conference-title">
-                            ${conference.acronym}: ${conference.name}
+        function getStatusLabel(daysToSubmission, isUpcoming) {
+            if (!isUpcoming) {
+                const daysAgo = Math.abs(daysToSubmission);
+                return daysAgo === 1 ? "1 day ago" : `${daysAgo} days ago`;
+            }
+
+            if (daysToSubmission === 0) {
+                return "Due today";
+            }
+
+            if (daysToSubmission === 1) {
+                return "1 day left";
+            }
+
+            return `${daysToSubmission} days left`;
+        }
+
+        function normalizeRanking(ranking) {
+            return ranking === "A" || ranking === "B" || ranking === "C" ? ranking : "Unknown";
+        }
+
+        function conferenceMatchesFilters(conference) {
+            const normalizedRank = normalizeRanking(conference.ranking);
+            const matchesRank = state.rank === "all" || normalizedRank === state.rank;
+
+            if (!matchesRank) {
+                return false;
+            }
+
+            if (!state.query) {
+                return true;
+            }
+
+            const haystack = `${conference.acronym} ${conference.name}`.toLowerCase();
+            return haystack.includes(state.query);
+        }
+
+        function renderConference(conference, isUpcoming) {
+            const daysToSubmission = getDaysToSubmission(conference.submission_deadline);
+            const conferenceDates = conference.conference_start === conference.conference_end
+                ? formatDate(conference.conference_start)
+                : `${formatDate(conference.conference_start)} - ${formatDate(conference.conference_end)}`;
+
+            return `
+                <article class="conference-item">
+                    <div class="conference-top">
+                        <a href="${conference.website}" target="_blank" rel="noreferrer" class="conference-title">
+                            <strong>${conference.acronym}: ${conference.name}</strong>
+                            <span>${conference.location}</span>
                         </a>
-                        <div class="conference-meta">
-                            <span>📅 Submission Deadline: ${conference.submission_deadline}
-                                  📨 Notification Date: ${conference.notification}</span>
-                            <span>🎤 Conference: ${conference.conference_start} - ${conference.conference_end}
-                            📍 Location: ${conference.location}
-                            ⭐ Ranking: ${conference.ranking}</span>
-                            ${isUpcoming ? `<span>⏳ Days to Submission: ${daysToSubmission}</span>` : ""}
+                        <span class="badge">${getStatusLabel(daysToSubmission, isUpcoming)}</span>
+                    </div>
+
+                    <div class="conference-meta">
+                        <div class="meta-block">
+                            <label>Submission Deadline</label>
+                            <span>${formatDate(conference.submission_deadline)}</span>
+                        </div>
+                        <div class="meta-block">
+                            <label>Notification</label>
+                            <span>${formatDate(conference.notification)}</span>
+                        </div>
+                        <div class="meta-block">
+                            <label>Conference Dates</label>
+                            <span>${conferenceDates}</span>
+                        </div>
+                        <div class="meta-block">
+                            <label>Ranking</label>
+                            <span>${conference.ranking}</span>
                         </div>
                     </div>
+                </article>
+            `;
+        }
+
+        function renderList(containerId, list, isUpcoming) {
+            const container = document.getElementById(containerId);
+
+            if (!list.length) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        No conferences in this section.
+                    </div>
                 `;
-                container.innerHTML += conferenceHTML;
+                return;
             }
+
+            container.innerHTML = list.map((conference) => renderConference(conference, isUpcoming)).join("");
+        }
+
+        function renderSummary(allConferences, upcoming, past) {
+            const rankedCount = allConferences.filter((conference) => conference.ranking !== "Unknown").length;
+            const nextDeadline = upcoming[0];
+
+            document.getElementById("summary").innerHTML = `
+                <div class="summary-card">
+                    <strong>${allConferences.length}</strong>
+                    <span>Total conferences tracked</span>
+                </div>
+                <div class="summary-card">
+                    <strong>${upcoming.length}</strong>
+                    <span>Upcoming deadlines</span>
+                </div>
+                <div class="summary-card">
+                    <strong>${past.length}</strong>
+                    <span>Past deadlines</span>
+                </div>
+                <div class="summary-card">
+                    <strong>${rankedCount}</strong>
+                    <span>${nextDeadline ? `Next: ${nextDeadline.acronym} on ${formatDate(nextDeadline.submission_deadline)}` : "No upcoming deadlines"}</span>
+                </div>
+            `;
+        }
+
+        function updateResultsNote(filteredCount, totalCount) {
+            const note = document.getElementById("results-note");
+
+            if (filteredCount === totalCount) {
+                note.textContent = "Showing all conferences.";
+                return;
+            }
+
+            if (filteredCount === 0) {
+                note.textContent = "No conferences match the current filters.";
+                return;
+            }
+
+            note.textContent = `Showing ${filteredCount} of ${totalCount} conferences.`;
+        }
+
+        function updateCollapseButton(sectionKey, count) {
+            const button = document.getElementById(`${sectionKey}-toggle`);
+            const isCollapsed = state.collapsed[sectionKey];
+            button.textContent = isCollapsed ? "Show" : "Hide";
+            button.setAttribute("aria-expanded", String(!isCollapsed));
+
+            const title = document.getElementById(`${sectionKey}-title`);
+            title.textContent = `${sectionKey === "upcoming" ? "Upcoming Deadlines" : "Past Deadlines"} (${count})`;
+
+            const list = document.getElementById(`${sectionKey}-conferences`);
+            list.classList.toggle("is-collapsed", isCollapsed);
+        }
+
+        function renderPage() {
+            const sortedConferences = [...conferences].sort((left, right) => {
+                return parseDate(left.submission_deadline) - parseDate(right.submission_deadline);
+            });
+
+            const filteredConferences = sortedConferences.filter(conferenceMatchesFilters);
+            const upcoming = filteredConferences.filter((conference) => getDaysToSubmission(conference.submission_deadline) >= 0);
+            const past = filteredConferences.filter((conference) => getDaysToSubmission(conference.submission_deadline) < 0).reverse();
+
+            renderSummary(sortedConferences, upcoming, past);
+            renderList("upcoming-conferences", upcoming, true);
+            renderList("past-conferences", past, false);
+            updateResultsNote(filteredConferences.length, sortedConferences.length);
+            updateCollapseButton("upcoming", upcoming.length);
+            updateCollapseButton("past", past.length);
+        }
+
+        document.getElementById("name-filter").addEventListener("input", (event) => {
+            state.query = event.target.value.trim().toLowerCase();
+            renderPage();
         });
-    }
 
-    // Sort conferences by submission date
-    const sortedConferences = conferences.sort((a, b) => parseDate(a.submission_deadline) - parseDate(b.submission_deadline));
+        document.getElementById("rank-filter").addEventListener("change", (event) => {
+            state.rank = event.target.value;
+            renderPage();
+        });
 
-    // Render Upcoming and Past Deadlines
-    renderConferences(sortedConferences, "upcoming-conferences", true);
-    renderConferences(sortedConferences, "past-conferences", false);
-</script>
+        document.getElementById("upcoming-toggle").addEventListener("click", () => {
+            state.collapsed.upcoming = !state.collapsed.upcoming;
+            updateCollapseButton("upcoming", document.querySelectorAll("#upcoming-conferences .conference-item").length);
+        });
 
-<div class="footer">
-     <p>View the source code on <a href="https://github.com/keniack/ecc-conferences" target="_blank">GitHub</a></p>
-     <p>Contributors: <a href="https://github.com/keniack/ecc-conferences/graphs/contributors" target="_blank">See Contributors</a></p>
-</div>
+        document.getElementById("past-toggle").addEventListener("click", () => {
+            state.collapsed.past = !state.collapsed.past;
+            updateCollapseButton("past", document.querySelectorAll("#past-conferences .conference-item").length);
+        });
+
+        renderPage();
+    </script>
 </body>
 </html>

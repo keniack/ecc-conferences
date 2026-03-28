@@ -2,6 +2,7 @@
 _site/
 .sass-cache/
 .jekyll-cache/
+.idea
 
 # Ignore dependencies
 vendor/
@@ -17,3 +18,5 @@ Thumbs.db
 *.swp
 *~
 
+# Ignore generated automation reports
+.github/conference-agent-report.md
