@@ -77,6 +77,10 @@ DEFAULT_MODEL = "gemini-2.5-flash"
 DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-conferences)"
 LLM_MAX_RETRIES = 2
+LLM_BATCH_SIZE = 5
+LLM_MAX_REQUESTS_PER_MINUTE = 10
+LLM_REQUEST_INTERVAL_SECONDS = 60 / LLM_MAX_REQUESTS_PER_MINUTE
+_next_llm_request_at = 0.0
 
 
 class TextExtractor(HTMLParser):
@@ -121,6 +125,14 @@ class AnalysisResult:
     changed_fields: list[str]
     updated_record: dict[str, str]
     review_note: str | None = None
+
+
+@dataclass
+class PreparedConference:
+    index: int
+    record: dict[str, str]
+    snapshots: list[PageSnapshot]
+    heuristic: dict[str, Any]
 
 
 def parse_args() -> argparse.Namespace:
@@ -554,6 +566,15 @@ def rate_limit_backoff_seconds(exc: urllib.error.HTTPError, attempt: int) -> int
     return min(2**attempt, 30)
 
 
+def wait_for_llm_request_slot() -> None:
+    global _next_llm_request_at
+
+    now = time.monotonic()
+    if _next_llm_request_at > now:
+        time.sleep(_next_llm_request_at - now)
+    _next_llm_request_at = time.monotonic() + LLM_REQUEST_INTERVAL_SECONDS
+
+
 def parse_json_object(value: str) -> dict[str, Any]:
     stripped = value.strip()
     try:
@@ -566,11 +587,7 @@ def parse_json_object(value: str) -> dict[str, Any]:
         return json.loads(stripped[start : end + 1])
 
 
-def analyze_with_llm(
-    record: dict[str, str],
-    snapshots: list[PageSnapshot],
-    timeout: int,
-) -> dict[str, Any]:
+def build_pages_payload(snapshots: list[PageSnapshot]) -> list[dict[str, Any]]:
     pages = []
     for snapshot in snapshots:
         pages.append(
@@ -581,58 +598,14 @@ def analyze_with_llm(
                 "excerpt": build_excerpt(snapshot.text) if snapshot.text else "",
             }
         )
+    return pages
 
+
+def request_llm_completion(payload: dict[str, Any], timeout: int) -> dict[str, Any]:
     payload = {
         "model": get_env_value("OPENAI_MODEL", DEFAULT_MODEL),
         "temperature": 0,
-        "response_format": {"type": "json_object"},
-        "messages": [
-            {
-                "role": "system",
-                "content": textwrap.dedent(
-                    """
-                    You maintain a structured dataset of conference CFPs.
-                    Read the current record and the provided page excerpts.
-                    Only use facts that are explicitly present in the excerpts.
-
-                    Return JSON with this shape:
-                    {
-                      "status": "unchanged" | "update" | "review",
-                      "confidence": 0.0,
-                      "reason": "short explanation",
-                      "selected_url": "https://...",
-                      "record": {
-                        "submission_deadline": "DD.MM.YYYY",
-                        "notification": "DD.MM.YYYY",
-                        "conference_start": "DD.MM.YYYY",
-                        "conference_end": "DD.MM.YYYY",
-                        "location": "text",
-                        "website": "https://..."
-                      }
-                    }
-
-                    Rules:
-                    - Prefer "review" instead of guessing.
-                    - Use "update" only when the excerpt clearly describes the same conference edition.
-                    - Keep fields unchanged unless the new value is explicit.
-                    - If both an original deadline and an extended/new/final/hard deadline appear, use the currently active extended submission deadline.
-                    - Do not confuse submission deadlines with abstract deadlines, workshop deadlines, camera-ready deadlines, or notification dates.
-                    - Dates must use DD.MM.YYYY.
-                    - selected_url should be the best CFP URL among the provided pages.
-                    """
-                ).strip(),
-            },
-            {
-                "role": "user",
-                "content": json.dumps(
-                    {
-                        "current_record": record,
-                        "pages": pages,
-                    },
-                    ensure_ascii=False,
-                ),
-            },
-        ],
+        **payload,
     }
 
     api_key = get_env_value("OPENAI_API_KEY")
@@ -648,6 +621,7 @@ def analyze_with_llm(
     )
     for attempt in range(LLM_MAX_RETRIES + 1):
         try:
+            wait_for_llm_request_slot()
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 raw = response.read().decode("utf-8")
             break
@@ -663,6 +637,97 @@ def analyze_with_llm(
             part.get("text", "") for part in content if isinstance(part, dict)
         )
     return parse_json_object(content)
+
+
+def parse_batch_result_id(value: Any) -> int | None:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    return None
+
+
+def analyze_batch_with_llm(
+    prepared_batch: list[PreparedConference],
+    timeout: int,
+) -> dict[int, dict[str, Any]]:
+    entries = []
+    for prepared in prepared_batch:
+        entries.append(
+            {
+                "id": prepared.index,
+                "current_record": prepared.record,
+                "pages": build_pages_payload(prepared.snapshots),
+            }
+        )
+
+    response = request_llm_completion(
+        {
+            "response_format": {"type": "json_object"},
+            "messages": [
+                {
+                    "role": "system",
+                    "content": textwrap.dedent(
+                        """
+                        You maintain a structured dataset of conference CFPs.
+                        Read each entry's current record and page excerpts.
+                        Only use facts that are explicitly present in the excerpts.
+
+                        Return JSON with this shape:
+                        {
+                          "results": [
+                            {
+                              "id": 123,
+                              "status": "unchanged" | "update" | "review",
+                              "confidence": 0.0,
+                              "reason": "short explanation",
+                              "selected_url": "https://...",
+                              "record": {
+                                "submission_deadline": "DD.MM.YYYY",
+                                "notification": "DD.MM.YYYY",
+                                "conference_start": "DD.MM.YYYY",
+                                "conference_end": "DD.MM.YYYY",
+                                "location": "text",
+                                "website": "https://..."
+                              }
+                            }
+                          ]
+                        }
+
+                        Rules:
+                        - Return exactly one result for every provided id.
+                        - Prefer "review" instead of guessing.
+                        - Use "update" only when the excerpt clearly describes the same conference edition.
+                        - Keep fields unchanged unless the new value is explicit.
+                        - If both an original deadline and an extended/new/final/hard deadline appear, use the currently active extended submission deadline.
+                        - Do not confuse submission deadlines with abstract deadlines, workshop deadlines, camera-ready deadlines, or notification dates.
+                        - Dates must use DD.MM.YYYY.
+                        - selected_url should be the best CFP URL among the provided pages.
+                        """
+                    ).strip(),
+                },
+                {
+                    "role": "user",
+                    "content": json.dumps({"entries": entries}, ensure_ascii=False),
+                },
+            ],
+        },
+        timeout,
+    )
+
+    results = response.get("results")
+    if not isinstance(results, list):
+        raise ValueError("LLM batch response did not contain a 'results' list")
+
+    parsed_results: dict[int, dict[str, Any]] = {}
+    for result in results:
+        if not isinstance(result, dict):
+            continue
+        result_id = parse_batch_result_id(result.get("id"))
+        if result_id is not None:
+            parsed_results[result_id] = result
+
+    return parsed_results
 
 
 def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) -> dict[str, Any]:
@@ -763,12 +828,11 @@ def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot
     return not any(year and year in snapshot.text for year in expected_years)
 
 
-def analyze_conference(
+def prepare_conference(
     record: dict[str, str],
     timeout: int,
     search_fallback: bool,
-    min_confidence: float,
-) -> AnalysisResult:
+) -> PreparedConference:
     primary_snapshot = fetch_page(record["website"], timeout)
     snapshots = [primary_snapshot]
 
@@ -780,25 +844,38 @@ def analyze_conference(
             snapshots.append(candidate_snapshot)
 
     heuristic = heuristic_analysis(record, snapshots)
+    return PreparedConference(
+        index=-1,
+        record=record,
+        snapshots=snapshots,
+        heuristic=heuristic,
+    )
 
-    if llm_enabled() and heuristic.get("status") != "unchanged":
-        try:
-            analysis = analyze_with_llm(record, snapshots, timeout)
-        except Exception as exc:
-            analysis = dict(heuristic)
-            heuristic_reason = collapse_whitespace(str(heuristic.get("reason", "")))
-            if isinstance(exc, urllib.error.HTTPError) and exc.code == 429:
-                prefix = "LLM rate-limited; using heuristic result."
-            elif isinstance(exc, urllib.error.HTTPError) and exc.code == 401:
-                prefix = "LLM provider rejected the API key or endpoint configuration (401 Unauthorized); using heuristic result."
-            else:
-                prefix = f"LLM analysis failed: {exc}. Using heuristic result."
-            analysis["reason"] = collapse_whitespace(f"{prefix} {heuristic_reason}")
-            if not analysis.get("selected_url"):
-                analysis["selected_url"] = primary_snapshot.final_url or primary_snapshot.url
+
+def build_heuristic_fallback_analysis(
+    heuristic: dict[str, Any],
+    primary_snapshot: PageSnapshot,
+    exc: Exception,
+) -> dict[str, Any]:
+    analysis = dict(heuristic)
+    heuristic_reason = collapse_whitespace(str(heuristic.get("reason", "")))
+    if isinstance(exc, urllib.error.HTTPError) and exc.code == 429:
+        prefix = "LLM rate-limited; using heuristic result."
+    elif isinstance(exc, urllib.error.HTTPError) and exc.code == 401:
+        prefix = "LLM provider rejected the API key or endpoint configuration (401 Unauthorized); using heuristic result."
     else:
-        analysis = heuristic
+        prefix = f"LLM analysis failed: {exc}. Using heuristic result."
+    analysis["reason"] = collapse_whitespace(f"{prefix} {heuristic_reason}")
+    if not analysis.get("selected_url"):
+        analysis["selected_url"] = primary_snapshot.final_url or primary_snapshot.url
+    return analysis
 
+
+def finalize_analysis(
+    record: dict[str, str],
+    analysis: dict[str, Any],
+    min_confidence: float,
+) -> AnalysisResult:
     updated_record, changed_fields = sanitize_candidate_record(
         record,
         analysis.get("record"),
@@ -844,6 +921,23 @@ def analyze_conference(
     )
 
 
+def should_skip_future_deadline(record: dict[str, str]) -> bool:
+    deadline = parse_normalized_date(record.get("submission_deadline"))
+    if not deadline:
+        return False
+    return deadline.date() > datetime.utcnow().date()
+
+
+def chunk_prepared_entries(
+    prepared_entries: list[PreparedConference],
+    size: int,
+) -> list[list[PreparedConference]]:
+    return [
+        prepared_entries[index : index + size]
+        for index in range(0, len(prepared_entries), size)
+    ]
+
+
 def format_change_line(
     acronym: str,
     changed_fields: list[str],
@@ -858,6 +952,7 @@ def format_change_line(
 
 def build_report(
     processed: int,
+    skipped_future: int,
     updated: list[tuple[dict[str, str], AnalysisResult]],
     reviews: list[AnalysisResult],
     unchanged: int,
@@ -868,6 +963,7 @@ def build_report(
         "",
         f"- Mode: {'auto-update' if llm_mode else 'check-only'}",
         f"- Processed conferences: {processed}",
+        f"- Skipped future deadlines: {skipped_future}",
         f"- Updated entries: {len(updated)}",
         f"- Needs review: {len(reviews)}",
         f"- Unchanged: {unchanged}",
@@ -928,13 +1024,31 @@ def main() -> int:
     updated_results: list[tuple[dict[str, str], AnalysisResult]] = []
     review_results: list[AnalysisResult] = []
     unchanged_count = 0
+    processed_count = 0
+    skipped_future_count = 0
+    pending_llm_entries: list[PreparedConference] = []
 
     for index, conference in enumerate(conferences[:limit]):
-        result = analyze_conference(
+        if should_skip_future_deadline(conference):
+            skipped_future_count += 1
+            continue
+
+        processed_count += 1
+        prepared = prepare_conference(
             conference,
             timeout=args.timeout,
             search_fallback=args.search_fallback,
-            min_confidence=args.min_confidence,
+        )
+        prepared.index = index
+
+        if llm_enabled() and prepared.heuristic.get("status") != "unchanged":
+            pending_llm_entries.append(prepared)
+            continue
+
+        result = finalize_analysis(
+            conference,
+            prepared.heuristic,
+            args.min_confidence,
         )
         if result.status == "update":
             original = dict(conference)
@@ -945,11 +1059,46 @@ def main() -> int:
         else:
             unchanged_count += 1
 
+    for batch in chunk_prepared_entries(pending_llm_entries, LLM_BATCH_SIZE):
+        batch_error: Exception | None = None
+        batch_analysis: dict[int, dict[str, Any]] = {}
+        try:
+            batch_analysis = analyze_batch_with_llm(batch, args.timeout)
+        except Exception as exc:
+            batch_error = exc
+
+        for prepared in batch:
+            analysis = batch_analysis.get(prepared.index)
+            if analysis is None:
+                fallback_exc = batch_error or ValueError(
+                    f"LLM batch response omitted conference id {prepared.index}"
+                )
+                analysis = build_heuristic_fallback_analysis(
+                    prepared.heuristic,
+                    prepared.snapshots[0],
+                    fallback_exc,
+                )
+
+            result = finalize_analysis(
+                prepared.record,
+                analysis,
+                args.min_confidence,
+            )
+            if result.status == "update":
+                original = dict(prepared.record)
+                conferences[prepared.index] = result.updated_record
+                updated_results.append((original, result))
+            elif result.status == "review":
+                review_results.append(result)
+            else:
+                unchanged_count += 1
+
     if args.write and updated_results:
         write_yaml(input_path, data)
 
     report = build_report(
-        processed=min(limit, len(conferences)),
+        processed=processed_count,
+        skipped_future=skipped_future_count,
         updated=updated_results,
         reviews=review_results,
         unchanged=unchanged_count,
