@@ -232,7 +232,7 @@ conferences:
   conference_start: 27.10.2026
   conference_end: 29.10.2026
   location: Paris, France
-  website: https://easychair.org/cfp/cloudcom2026
+  website: https://cloudcom2026.org/
 - name: IEEE International Symposium on Real-Time Distributed Computing
   acronym: ISORC
   ranking: C
@@ -290,8 +290,8 @@ conferences:
 - name: ACM International Conference on the Internet of Things
   acronym: IoT
   ranking: Unknown
-  submission_deadline: 01.08.2026
-  notification: 03.09.2026
+  submission_deadline: 01.08.2025
+  notification: 03.09.2025
   conference_start: 19.11.2026
   conference_end: 21.11.2026
   location: Newcastle, England, UK
@@ -416,8 +416,8 @@ conferences:
 - name: Utility and Cloud Computing
   acronym: UCC
   ranking: Unknown
-  submission_deadline: 19.09.2026
-  notification: 07.10.2026
+  submission_deadline: 19.09.2025
+  notification: 07.10.2025
   conference_start: 01.12.2026
   conference_end: 04.12.2026
   location: Florianopolis, Brazil

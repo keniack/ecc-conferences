@@ -80,6 +80,7 @@ LLM_MAX_RETRIES = 2
 LLM_BATCH_SIZE = 5
 LLM_MAX_REQUESTS_PER_MINUTE = 10
 LLM_REQUEST_INTERVAL_SECONDS = 60 / LLM_MAX_REQUESTS_PER_MINUTE
+DISALLOWED_WEBSITE_HOST_FRAGMENTS = ("easychair", "hotcrp", "edas")
 _next_llm_request_at = 0.0
 
 
@@ -349,7 +350,11 @@ def search_candidate_urls(record: dict[str, str], timeout: int, limit: int = 3) 
             html = response.read().decode("utf-8", errors="replace")
     except Exception:
         return []
-    return parse_search_results(html)[:limit]
+    return [
+        url
+        for url in parse_search_results(html)
+        if not is_disallowed_conference_url(url)
+    ][:limit]
 
 
 def year_from_date(value: str | None) -> str | None:
@@ -364,6 +369,13 @@ def valid_url(value: str | None) -> bool:
         return False
     parsed = urllib.parse.urlparse(value.strip())
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def is_disallowed_conference_url(value: str | None) -> bool:
+    if not value:
+        return False
+    hostname = urllib.parse.urlparse(value.strip()).netloc.lower()
+    return any(fragment in hostname for fragment in DISALLOWED_WEBSITE_HOST_FRAGMENTS)
 
 
 def normalize_date(value: str | None) -> str | None:
@@ -702,6 +714,7 @@ def analyze_batch_with_llm(
                         - If both an original deadline and an extended/new/final/hard deadline appear, use the currently active extended submission deadline.
                         - Do not confuse submission deadlines with abstract deadlines, workshop deadlines, camera-ready deadlines, or notification dates.
                         - Dates must use DD.MM.YYYY.
+                        - Do not use EasyChair, HotCRP, or EDAS URLs as selected_url or website.
                         - selected_url should be the best CFP URL among the provided pages.
                         """
                     ).strip(),
@@ -738,6 +751,15 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
             "confidence": 0.2,
             "reason": f'Current website is unreachable ({current.error or "request failed"}).',
             "selected_url": None,
+            "record": {},
+        }
+
+    if is_disallowed_conference_url(current.final_url or current.url):
+        return {
+            "status": "review",
+            "confidence": 0.68,
+            "reason": "Current website points to EasyChair, HotCRP, or EDAS. Use the public conference or CFP page instead.",
+            "selected_url": preferred_public_snapshot_url(snapshots[1:]),
             "record": {},
         }
 
@@ -801,10 +823,21 @@ def sanitize_candidate_record(
             continue
 
         if field == "website":
-            candidate_url = selected_url or (str(incoming).strip() if incoming else None)
-            if candidate_url and valid_url(candidate_url) and candidate_url != original.get(field):
-                updated[field] = candidate_url
-                changed_fields.append(field)
+            candidate_urls = []
+            if selected_url:
+                candidate_urls.append(selected_url)
+            if incoming:
+                candidate_urls.append(str(incoming).strip())
+            for candidate_url in candidate_urls:
+                if (
+                    candidate_url
+                    and valid_url(candidate_url)
+                    and not is_disallowed_conference_url(candidate_url)
+                    and candidate_url != original.get(field)
+                ):
+                    updated[field] = candidate_url
+                    changed_fields.append(field)
+                    break
             continue
 
         if incoming:
@@ -817,6 +850,8 @@ def sanitize_candidate_record(
 
 
 def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot) -> bool:
+    if is_disallowed_conference_url(record.get("website")):
+        return True
     if not snapshot.ok:
         return True
     if len(snapshot.text) < 500:
@@ -826,6 +861,14 @@ def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot
         year_from_date(record.get("submission_deadline")),
     }
     return not any(year and year in snapshot.text for year in expected_years)
+
+
+def preferred_public_snapshot_url(snapshots: list[PageSnapshot]) -> str | None:
+    for snapshot in snapshots:
+        candidate_url = snapshot.final_url or snapshot.url
+        if snapshot.ok and valid_url(candidate_url) and not is_disallowed_conference_url(candidate_url):
+            return candidate_url
+    return None
 
 
 def prepare_conference(
