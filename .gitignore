@@ -3,6 +3,7 @@ _site/
 .sass-cache/
 .jekyll-cache/
 .idea
+__pycache__/
 
 # Ignore dependencies
 vendor/

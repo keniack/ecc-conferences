@@ -370,7 +370,15 @@ def normalize_date(value: str | None) -> str | None:
 
 
 def llm_enabled() -> bool:
-    return bool(os.getenv("OPENAI_API_KEY"))
+    return bool(get_env_value("OPENAI_API_KEY"))
+
+
+def get_env_value(name: str, default: str | None = None) -> str | None:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    stripped = value.strip()
+    return stripped if stripped else default
 
 
 def parse_normalized_date(value: str | None) -> datetime | None:
@@ -508,7 +516,7 @@ def analyze_with_llm(
         )
 
     payload = {
-        "model": os.getenv("OPENAI_MODEL", DEFAULT_MODEL),
+        "model": get_env_value("OPENAI_MODEL", DEFAULT_MODEL),
         "temperature": 0,
         "response_format": {"type": "json_object"},
         "messages": [
@@ -560,12 +568,13 @@ def analyze_with_llm(
         ],
     }
 
-    base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+    api_key = get_env_value("OPENAI_API_KEY")
+    base_url = get_env_value("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
     request = urllib.request.Request(
         f"{base_url}/chat/completions",
         data=json.dumps(payload).encode("utf-8"),
         headers={
-            "Authorization": f'Bearer {os.environ["OPENAI_API_KEY"]}',
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         },
         method="POST",
