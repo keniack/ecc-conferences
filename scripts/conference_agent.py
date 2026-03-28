@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import textwrap
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -54,6 +55,13 @@ EXTENSION_KEYWORDS = (
     "submission extended",
     "paper submission extended",
 )
+DEADLINE_CONTEXT_KEYWORDS = (
+    "submission deadline",
+    "important dates",
+    "paper submission",
+    "submission",
+    "deadline",
+)
 MONTH_PATTERN = (
     r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
     r"Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
@@ -67,6 +75,7 @@ DATE_CANDIDATE_PATTERNS = (
 )
 DEFAULT_MODEL = "gpt-4.1-mini"
 USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-conferences)"
+LLM_MAX_RETRIES = 2
 
 
 class TextExtractor(HTMLParser):
@@ -391,6 +400,26 @@ def parse_normalized_date(value: str | None) -> datetime | None:
         return None
 
 
+def date_text_variants(value: str | None) -> list[str]:
+    date_value = parse_normalized_date(value)
+    if not date_value:
+        return []
+
+    variants = [
+        date_value.strftime("%d.%m.%Y"),
+        f"{date_value.day}.{date_value.month}.{date_value.year}",
+        date_value.strftime("%Y-%m-%d"),
+        date_value.strftime("%d/%m/%Y"),
+        f"{date_value.month}/{date_value.day}/{date_value.year}",
+        f"{date_value.day}/{date_value.month}/{date_value.year}",
+        f"{date_value.strftime('%B')} {date_value.day}, {date_value.year}",
+        f"{date_value.strftime('%b')} {date_value.day}, {date_value.year}",
+        f"{date_value.day} {date_value.strftime('%B')} {date_value.year}",
+        f"{date_value.day} {date_value.strftime('%b')} {date_value.year}",
+    ]
+    return dedupe_preserve_order(variants)
+
+
 def dedupe_preserve_order(values: list[str]) -> list[str]:
     seen: set[str] = set()
     deduped: list[str] = []
@@ -487,6 +516,43 @@ def detect_deadline_extension_signal(
     )
 
 
+def page_mentions_current_deadline(record: dict[str, str], snapshot: PageSnapshot) -> bool:
+    if not snapshot.ok or not snapshot.text:
+        return False
+
+    current_deadline = normalize_date(record.get("submission_deadline"))
+    if not current_deadline:
+        return False
+
+    text_lower = snapshot.text.lower()
+    for variant in date_text_variants(current_deadline):
+        if variant.lower() in text_lower:
+            return True
+
+    windows = collect_keyword_windows(
+        snapshot.text,
+        DEADLINE_CONTEXT_KEYWORDS,
+        before=260,
+        after=260,
+        max_windows=10,
+    )
+    for window in windows:
+        if current_deadline in extract_date_candidates(window):
+            return True
+
+    return False
+
+
+def rate_limit_backoff_seconds(exc: urllib.error.HTTPError, attempt: int) -> int:
+    retry_after = exc.headers.get("Retry-After") if getattr(exc, "headers", None) else None
+    if retry_after:
+        try:
+            return max(1, min(int(retry_after), 30))
+        except ValueError:
+            pass
+    return min(2**attempt, 30)
+
+
 def parse_json_object(value: str) -> dict[str, Any]:
     stripped = value.strip()
     try:
@@ -579,8 +645,16 @@ def analyze_with_llm(
         },
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        raw = response.read().decode("utf-8")
+    for attempt in range(LLM_MAX_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                raw = response.read().decode("utf-8")
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code == 429 and attempt < LLM_MAX_RETRIES:
+                time.sleep(rate_limit_backoff_seconds(exc, attempt + 1))
+                continue
+            raise
     body = json.loads(raw)
     content = body["choices"][0]["message"]["content"]
     if isinstance(content, list):
@@ -601,7 +675,6 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
             "record": {},
         }
 
-    text = current.text.lower()
     extended_deadline, extension_reason = detect_deadline_extension_signal(record, current)
     if extension_reason:
         return {
@@ -612,16 +685,16 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
             "record": {"submission_deadline": extended_deadline} if extended_deadline else {},
         }
 
-    current_deadline = (record.get("submission_deadline") or "").lower()
-    if current_deadline and current_deadline in text:
+    if page_mentions_current_deadline(record, current):
         return {
             "status": "unchanged",
-            "confidence": 0.65,
-            "reason": "Current deadline string appears on the page.",
+            "confidence": 0.72,
+            "reason": "Current submission deadline appears on the page.",
             "selected_url": current.final_url or current.url,
             "record": {},
         }
 
+    text = current.text.lower()
     expected_year = year_from_date(record.get("conference_start")) or year_from_date(
         record.get("submission_deadline")
     )
@@ -705,19 +778,24 @@ def analyze_conference(
             candidate_snapshot = fetch_page(candidate_url, timeout)
             snapshots.append(candidate_snapshot)
 
-    if llm_enabled():
+    heuristic = heuristic_analysis(record, snapshots)
+
+    if llm_enabled() and heuristic.get("status") != "unchanged":
         try:
             analysis = analyze_with_llm(record, snapshots, timeout)
         except Exception as exc:
-            analysis = {
-                "status": "review",
-                "confidence": 0.0,
-                "reason": f"LLM analysis failed: {exc}",
-                "selected_url": None,
-                "record": {},
-            }
+            analysis = dict(heuristic)
+            heuristic_reason = collapse_whitespace(str(heuristic.get("reason", "")))
+            prefix = (
+                "LLM rate-limited; using heuristic result."
+                if isinstance(exc, urllib.error.HTTPError) and exc.code == 429
+                else f"LLM analysis failed: {exc}. Using heuristic result."
+            )
+            analysis["reason"] = collapse_whitespace(f"{prefix} {heuristic_reason}")
+            if not analysis.get("selected_url"):
+                analysis["selected_url"] = primary_snapshot.final_url or primary_snapshot.url
     else:
-        analysis = heuristic_analysis(record, snapshots)
+        analysis = heuristic
 
     updated_record, changed_fields = sanitize_candidate_record(
         record,
