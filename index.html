@@ -241,34 +241,6 @@
             background: var(--primary-dark);
         }
 
-        .submit-feedback {
-            margin: 0;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .summary-card {
-            flex: 1 1 180px;
-            background: var(--card-bg);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 16px 18px;
-            box-shadow: var(--shadow);
-        }
-
-        .summary-card strong {
-            display: block;
-            font-size: 1.55rem;
-            color: var(--primary);
-        }
-
-        .summary-card span {
-            display: block;
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
         .section {
             margin-top: 22px;
         }
@@ -708,30 +680,6 @@
             container.innerHTML = list.map((conference) => renderConference(conference, isUpcoming)).join("");
         }
 
-        function renderSummary(allConferences, upcoming, past) {
-            const rankedCount = allConferences.filter((conference) => conference.ranking !== "Unknown").length;
-            const nextDeadline = upcoming[0];
-
-            document.getElementById("summary").innerHTML = `
-                <div class="summary-card">
-                    <strong>${allConferences.length}</strong>
-                    <span>Total conferences tracked</span>
-                </div>
-                <div class="summary-card">
-                    <strong>${upcoming.length}</strong>
-                    <span>Upcoming deadlines</span>
-                </div>
-                <div class="summary-card">
-                    <strong>${past.length}</strong>
-                    <span>Past deadlines</span>
-                </div>
-                <div class="summary-card">
-                    <strong>${rankedCount}</strong>
-                    <span>${nextDeadline ? `Next: ${nextDeadline.acronym} on ${formatDate(nextDeadline.submission_deadline)}` : "No upcoming deadlines"}</span>
-                </div>
-            `;
-        }
-
         function updateResultsNote(filteredCount, totalCount) {
             const note = document.getElementById("results-note");
 
@@ -770,7 +718,6 @@
             const upcoming = filteredConferences.filter((conference) => getDaysToSubmission(conference.submission_deadline) >= 0);
             const past = filteredConferences.filter((conference) => getDaysToSubmission(conference.submission_deadline) < 0).reverse();
 
-            renderSummary(sortedConferences, upcoming, past);
             renderList("upcoming-conferences", upcoming, true);
             renderList("past-conferences", past, false);
             updateResultsNote(filteredConferences.length, sortedConferences.length);
