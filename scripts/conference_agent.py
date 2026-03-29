@@ -80,7 +80,7 @@ USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-confere
 LLM_MAX_RETRIES = 2
 LLM_BATCH_SIZE = 5
 LOCAL_TIMEZONE = ZoneInfo("Europe/Vienna")
-RECENT_DEADLINE_WINDOW_DAYS = 30
+RECENT_DEADLINE_WINDOW_DAYS = 10
 LLM_MAX_REQUESTS_PER_MINUTE = 10
 LLM_REQUEST_INTERVAL_SECONDS = 60 / LLM_MAX_REQUESTS_PER_MINUTE
 DISALLOWED_WEBSITE_HOST_FRAGMENTS = ("easychair", "hotcrp", "edas")
@@ -439,6 +439,13 @@ def valid_url(value: str | None) -> bool:
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
+def is_pdf_url(value: str | None) -> bool:
+    if not value:
+        return False
+    parsed = urllib.parse.urlparse(value.strip())
+    return parsed.path.lower().endswith(".pdf")
+
+
 def is_disallowed_conference_url(value: str | None) -> bool:
     if not value:
         return False
@@ -620,7 +627,7 @@ def preferred_linked_cfp_url(snapshot: PageSnapshot) -> str | None:
 
 
 def cfp_url_signal_score(url: str | None) -> int:
-    if not url or not valid_url(url) or is_disallowed_conference_url(url):
+    if not url or not valid_url(url) or is_disallowed_conference_url(url) or is_pdf_url(url):
         return -1
     parsed = urllib.parse.urlparse(url)
     signal_text = f"{parsed.path} {parsed.query}".lower()
@@ -882,6 +889,7 @@ def analyze_batch_with_llm(
                         - Do not confuse submission deadlines with abstract deadlines, workshop deadlines, camera-ready deadlines, or notification dates.
                         - Dates must use DD.MM.YYYY.
                         - Do not use EasyChair, HotCRP, or EDAS URLs as selected_url or website.
+                        - Do not use PDF URLs as selected_url or website. Prefer HTML CFP pages because PDF CFPs are often stale after deadline extensions.
                         - selected_url should be the best CFP URL among the provided pages.
                         """
                     ).strip(),
@@ -1017,6 +1025,7 @@ def sanitize_candidate_record(
                     candidate_url
                     and valid_url(candidate_url)
                     and not is_disallowed_conference_url(candidate_url)
+                    and not is_pdf_url(candidate_url)
                     and candidate_url != original.get(field)
                 ):
                     updated[field] = candidate_url
@@ -1036,6 +1045,8 @@ def sanitize_candidate_record(
 def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot) -> bool:
     if is_disallowed_conference_url(record.get("website")):
         return True
+    if is_pdf_url(record.get("website")):
+        return True
     if not snapshot.ok:
         return True
     if len(snapshot.text) < 500:
@@ -1050,7 +1061,12 @@ def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot
 def preferred_public_snapshot_url(snapshots: list[PageSnapshot]) -> str | None:
     for snapshot in snapshots:
         candidate_url = snapshot.final_url or snapshot.url
-        if snapshot.ok and valid_url(candidate_url) and not is_disallowed_conference_url(candidate_url):
+        if (
+            snapshot.ok
+            and valid_url(candidate_url)
+            and not is_disallowed_conference_url(candidate_url)
+            and not is_pdf_url(candidate_url)
+        ):
             return candidate_url
     return None
 
