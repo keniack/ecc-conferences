@@ -11,7 +11,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from html import unescape
 from html.parser import HTMLParser
@@ -109,6 +109,53 @@ class TextExtractor(HTMLParser):
         return " ".join(self._chunks)
 
 
+class LinkExtractor(HTMLParser):
+    def __init__(self, base_url: str) -> None:
+        super().__init__()
+        self._base_url = base_url
+        self._ignored_depth = 0
+        self._active_href: str | None = None
+        self._active_chunks: list[str] = []
+        self._links: list[tuple[str, str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in {"script", "style", "noscript"}:
+            self._ignored_depth += 1
+            return
+        if self._ignored_depth or tag != "a":
+            return
+        attributes = dict(attrs)
+        href = attributes.get("href")
+        if href:
+            self._active_href = href
+            self._active_chunks = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style", "noscript"} and self._ignored_depth:
+            self._ignored_depth -= 1
+            return
+        if self._ignored_depth or tag != "a" or not self._active_href:
+            return
+        resolved_url = urllib.parse.urljoin(self._base_url, self._active_href)
+        resolved_url, _ = urllib.parse.urldefrag(resolved_url)
+        self._links.append((resolved_url, collapse_whitespace(" ".join(self._active_chunks))))
+        self._active_href = None
+        self._active_chunks = []
+
+    def handle_data(self, data: str) -> None:
+        if not self._ignored_depth and self._active_href:
+            self._active_chunks.append(data)
+
+    def links(self) -> list[tuple[str, str]]:
+        return self._links
+
+
+@dataclass
+class PageLink:
+    url: str
+    text: str
+
+
 @dataclass
 class PageSnapshot:
     url: str
@@ -117,6 +164,7 @@ class PageSnapshot:
     ok: bool
     status_code: int | None = None
     error: str | None = None
+    links: list[PageLink] = field(default_factory=list)
 
 
 @dataclass
@@ -225,15 +273,17 @@ def fetch_page(url: str, timeout: int) -> PageSnapshot:
             raw = response.read()
             charset = response.headers.get_content_charset() or "utf-8"
             html = raw.decode(charset, errors="replace")
-            text = extract_text(html)
-            status_code = getattr(response, "status", None)
             final_url = response.geturl()
+            text = extract_text(html)
+            links = extract_links(html, final_url)
+            status_code = getattr(response, "status", None)
             return PageSnapshot(
                 url=url,
                 final_url=final_url,
                 text=text,
                 ok=True,
                 status_code=status_code,
+                links=links,
             )
     except urllib.error.HTTPError as exc:
         return PageSnapshot(
@@ -266,6 +316,19 @@ def extract_text(html: str) -> str:
     parser = TextExtractor()
     parser.feed(html)
     return collapse_whitespace(unescape(parser.text()))
+
+
+def extract_links(html: str, base_url: str) -> list[PageLink]:
+    parser = LinkExtractor(base_url)
+    parser.feed(html)
+    links: list[PageLink] = []
+    seen: set[str] = set()
+    for url, text in parser.links():
+        if not valid_url(url) or url in seen:
+            continue
+        links.append(PageLink(url=url, text=text))
+        seen.add(url)
+    return links
 
 
 def build_excerpt(text: str, max_chars: int = 12000) -> str:
@@ -507,6 +570,53 @@ def extract_date_candidates(text: str) -> list[str]:
     return dedupe_preserve_order(candidates)
 
 
+def cfp_link_score(snapshot: PageSnapshot, link: PageLink) -> int:
+    candidate_url = link.url.strip()
+    current_url = (snapshot.final_url or snapshot.url).strip()
+    if not candidate_url or candidate_url == current_url:
+        return -1
+    if is_disallowed_conference_url(candidate_url):
+        return -1
+
+    snapshot_host = urllib.parse.urlparse(current_url).netloc.lower()
+    candidate = urllib.parse.urlparse(candidate_url)
+    if candidate.scheme not in {"http", "https"} or not candidate.netloc:
+        return -1
+    if candidate.netloc.lower() != snapshot_host:
+        return -1
+
+    signal_text = f"{candidate.path} {link.text}".lower()
+    score = 0
+    if "/cfp" in candidate.path.lower() or "cfp" in signal_text:
+        score += 8
+    if "call-for-papers" in signal_text or "call for papers" in signal_text:
+        score += 8
+    if "important-dates" in signal_text or "important dates" in signal_text:
+        score += 6
+    if "submission" in signal_text:
+        score += 4
+    if "deadline" in signal_text:
+        score += 4
+    if "research" in signal_text:
+        score += 1
+    return score
+
+
+def linked_cfp_candidates(snapshot: PageSnapshot, limit: int = 5) -> list[PageLink]:
+    scored_links: list[tuple[int, PageLink]] = []
+    for link in snapshot.links:
+        score = cfp_link_score(snapshot, link)
+        if score >= 8:
+            scored_links.append((score, link))
+    scored_links.sort(key=lambda item: (-item[0], item[1].url))
+    return [link for _, link in scored_links[:limit]]
+
+
+def preferred_linked_cfp_url(snapshot: PageSnapshot) -> str | None:
+    candidates = linked_cfp_candidates(snapshot, limit=1)
+    return candidates[0].url if candidates else None
+
+
 def detect_deadline_extension_signal(
     record: dict[str, str],
     snapshot: PageSnapshot,
@@ -611,6 +721,10 @@ def build_pages_payload(snapshots: list[PageSnapshot]) -> list[dict[str, Any]]:
                 "status_code": snapshot.status_code,
                 "error": snapshot.error,
                 "excerpt": build_excerpt(snapshot.text) if snapshot.text else "",
+                "linked_pages": [
+                    {"url": link.url, "text": link.text}
+                    for link in linked_cfp_candidates(snapshot)
+                ],
             }
         )
     return pages
@@ -687,6 +801,7 @@ def analyze_batch_with_llm(
                         You maintain a structured dataset of conference CFPs.
                         Read each entry's current record and page excerpts.
                         Only use facts that are explicitly present in the excerpts.
+                        You may use linked_pages only to choose a better selected_url, not to infer facts from pages that were not fetched.
 
                         Return JSON with this shape:
                         {
@@ -748,6 +863,8 @@ def analyze_batch_with_llm(
 
 def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) -> dict[str, Any]:
     current = snapshots[0]
+    linked_cfp_url = preferred_linked_cfp_url(current)
+    selected_url = linked_cfp_url or current.final_url or current.url
     if not current.ok:
         return {
             "status": "review",
@@ -768,11 +885,16 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
 
     extended_deadline, extension_reason = detect_deadline_extension_signal(record, current)
     if extension_reason:
+        reason = extension_reason
+        if linked_cfp_url:
+            reason = collapse_whitespace(
+                f"{reason} Homepage links to a likely CFP page: {linked_cfp_url}."
+            )
         return {
             "status": "review",
             "confidence": 0.74 if extended_deadline else 0.58,
-            "reason": extension_reason,
-            "selected_url": current.final_url or current.url,
+            "reason": reason,
+            "selected_url": selected_url,
             "record": {"submission_deadline": extended_deadline} if extended_deadline else {},
         }
 
@@ -781,7 +903,7 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
             "status": "unchanged",
             "confidence": 0.72,
             "reason": "Current submission deadline appears on the page.",
-            "selected_url": current.final_url or current.url,
+            "selected_url": selected_url,
             "record": {},
         }
 
@@ -790,19 +912,29 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
         record.get("submission_deadline")
     )
     if expected_year and expected_year in text:
+        reason = "Page is reachable, but heuristic fallback cannot confidently extract structured updates."
+        if linked_cfp_url:
+            reason = collapse_whitespace(
+                f"{reason} Homepage links to a likely CFP page: {linked_cfp_url}."
+            )
         return {
             "status": "review",
             "confidence": 0.5,
-            "reason": "Page is reachable, but heuristic fallback cannot confidently extract structured updates.",
-            "selected_url": current.final_url or current.url,
+            "reason": reason,
+            "selected_url": selected_url,
             "record": {},
         }
 
+    reason = "Page content looks stale or ambiguous."
+    if linked_cfp_url:
+        reason = collapse_whitespace(
+            f"{reason} Homepage links to a likely CFP page: {linked_cfp_url}."
+        )
     return {
         "status": "review",
         "confidence": 0.35,
-        "reason": "Page content looks stale or ambiguous.",
-        "selected_url": current.final_url or current.url,
+        "reason": reason,
+        "selected_url": selected_url,
         "record": {},
     }
 
