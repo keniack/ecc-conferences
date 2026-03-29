@@ -57,7 +57,7 @@ conferences:
   acronym: ICPADS
   ranking: C
   submission_deadline: 31.08.2025
-  notification: 01.10.2025
+  notification: 15.10.2025
   conference_start: 14.12.2025
   conference_end: 18.12.2025
   location: Hefei, China
@@ -119,7 +119,7 @@ conferences:
 - name: 'International Conference on Mobility: Operations, Services, and Technologies'
   acronym: MOST
   ranking: Unknown
-  submission_deadline: 20.12.2025
+  submission_deadline: 04.01.2026
   notification: 28.02.2026
   conference_start: 04.05.2026
   conference_end: 06.05.2026
@@ -213,7 +213,7 @@ conferences:
   notification: 19.01.2025
   conference_start: 04.05.2026
   conference_end: 08.05.2026
-  location: Florence, Italy
+  location: Details about the ICPE 2026 conference venue are now available. Please visit the Venue page for location, maps, and directions.
   website: https://icpe2026.spec.org/
 - name: ACM International Symposium on High Performance Distributed Computing
   acronym: HPDC
@@ -246,7 +246,7 @@ conferences:
   acronym: IPDPS
   ranking: A
   submission_deadline: 09.10.2025
-  notification: 04.02.2026
+  notification: 02.02.2026
   conference_start: 25.05.2026
   conference_end: 29.05.2026
   location: New Orleans, USA
@@ -272,8 +272,8 @@ conferences:
 - name: IEEE BigComp
   acronym: BigComp
   ranking: Unknown
-  submission_deadline: 31.10.2025
-  notification: 28.11.2025
+  submission_deadline: 15.01.2026
+  notification: 02.01.2026
   conference_start: 02.02.2026
   conference_end: 05.02.2026
   location: Guangzhou, China
@@ -335,8 +335,8 @@ conferences:
 - name: Eurosys Conference
   acronym: EuroSys
   ranking: A
-  submission_deadline: 25.09.2025
-  notification: 30.10.2026
+  submission_deadline: 07.01.2026
+  notification: 30.01.2026
   conference_start: 13.04.2026
   conference_end: 16.04.2026
   location: Edinburgh, UK
@@ -353,11 +353,11 @@ conferences:
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
   ranking: A*
-  submission_deadline: 20.08.2025
-  notification: 24.11.2025
+  submission_deadline: 15.04.2026
+  notification: 27.07.2026
   conference_start: 22.03.2026
   conference_end: 26.03.2026
-  location: Pittsburgh, USA
+  location: The rapid review stage concentrates reviewer effort on later stages while still striving for fair and thoughtful feedback. Authors acknowledge that peer review is inherently imperfect but can expect that reviewers will do their best, even if the outcome is personally disappointing. Authors should also ensure that the first two pages are self-contained, as the reviewers will be instructed to refrain from reading beyond the first two pages in the rapid review phase.
   website: https://www.asplos-conference.org/call-for-papers-asplos27/
 - name: European conference on parallel and distributed processing
   acronym: Euro-Par
