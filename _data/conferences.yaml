@@ -344,11 +344,11 @@ conferences:
 - name: IEEE Services
   acronym: Services
   ranking: A/B
-  submission_deadline: 08.03.2026
+  submission_deadline: 22.03.2026
   notification: 10.05.2026
   conference_start: 13.07.2026
   conference_end: 18.07.2026
-  location: Sidney, Australia
+  location: Sydney, Australia
   website: https://services.conferences.computer.org/2026/
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
