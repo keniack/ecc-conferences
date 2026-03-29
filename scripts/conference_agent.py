@@ -83,6 +83,23 @@ CONFERENCE_DATE_LINE_LABELS = (
     "symposium dates",
 )
 LOCATION_LINE_LABELS = ("location", "venue")
+DISALLOWED_LOCATION_PHRASES = (
+    "accommodation",
+    "call for papers",
+    "committee",
+    "committees",
+    "contact",
+    "getting there",
+    "hotel reservation",
+    "important dates",
+    "past editions",
+    "registration",
+    "sponsor",
+    "sponsorship",
+    "travel grant",
+    "travel grants",
+    "venue & hotel reservation",
+)
 BLOCK_BREAK_TAGS = {
     "address",
     "article",
@@ -533,6 +550,8 @@ def search_candidate_urls(record: dict[str, str], timeout: int, limit: int = 3) 
         url
         for url in parse_search_results(html)
         if not is_disallowed_conference_url(url)
+        and not is_pdf_url(url)
+        and not is_incompatible_edition_url(record, url)
     ][:limit]
 
 
@@ -835,16 +854,36 @@ def parse_conference_date_range(record: dict[str, str], context: str) -> tuple[s
 
 
 def extract_location_value(lines: list[str]) -> str | None:
+    def normalize_location_candidate(value: str) -> str | None:
+        cleaned = collapse_whitespace(value).strip(" -:")
+        lowered = cleaned.lower()
+        if not cleaned:
+            return None
+        if any(phrase in lowered for phrase in DISALLOWED_LOCATION_PHRASES):
+            return None
+        if ":" in cleaned:
+            return None
+        if "," not in cleaned:
+            return None
+        left, right = [part.strip() for part in cleaned.split(",", 1)]
+        if len(left) < 2 or len(right) < 2:
+            return None
+        if not re.search(r"[A-Za-z]", left + right):
+            return None
+        return cleaned
+
     for index, line in enumerate(lines):
         lowered = line.lower()
         if not any(label in lowered for label in LOCATION_LINE_LABELS):
             continue
         match = re.search(r"(?:location|venue)\s*[:\-]\s*(.+)", line, re.IGNORECASE)
         if match:
-            return collapse_whitespace(match.group(1))
+            candidate = normalize_location_candidate(match.group(1))
+            if candidate:
+                return candidate
         if index + 1 < len(lines):
-            candidate = collapse_whitespace(lines[index + 1])
-            if candidate and ":" not in candidate and len(candidate) >= 4:
+            candidate = normalize_location_candidate(lines[index + 1])
+            if candidate:
                 return candidate
     return None
 
@@ -1000,8 +1039,26 @@ def is_older_edition_url(
     return baseline_year > reference_year and candidate_year < baseline_year
 
 
-def cfp_url_signal_score(url: str | None) -> int:
-    if not url or not valid_url(url) or is_disallowed_conference_url(url) or is_pdf_url(url):
+def is_incompatible_edition_url(record: dict[str, str], url: str | None) -> bool:
+    if not url:
+        return False
+    reference_year = record_reference_year(record)
+    year_hints = sorted(set(extract_year_hints(url)))
+    if reference_year is None or not year_hints:
+        return False
+    if len(year_hints) > 1:
+        return True
+    return year_hints[0] < reference_year
+
+
+def cfp_url_signal_score(record: dict[str, str], url: str | None) -> int:
+    if (
+        not url
+        or not valid_url(url)
+        or is_disallowed_conference_url(url)
+        or is_pdf_url(url)
+        or is_incompatible_edition_url(record, url)
+    ):
         return -1
     parsed = urllib.parse.urlparse(url)
     signal_text = f"{parsed.path} {parsed.query}".lower()
@@ -1034,7 +1091,14 @@ def merge_selected_url(
     candidates = [
         candidate
         for candidate in (current_url, selected_url, heuristic_selected_url)
-        if candidate and not is_older_edition_url(record, candidate, current_url)
+        if (
+            candidate
+            and not is_older_edition_url(record, candidate, current_url)
+            and (
+                candidate == current_url
+                or not is_incompatible_edition_url(record, candidate)
+            )
+        )
     ]
     if not candidates:
         return merged
@@ -1042,7 +1106,7 @@ def merge_selected_url(
     best_url = max(
         candidates,
         key=lambda candidate: (
-            cfp_url_signal_score(str(candidate)),
+            cfp_url_signal_score(record, str(candidate)),
             str(candidate) != (current_url or ""),
         ),
     )
@@ -1316,7 +1380,7 @@ def best_structured_heuristic_result(
         ranking_key = (
             len(updates),
             confidence,
-            cfp_url_signal_score(selected_url),
+            cfp_url_signal_score(record, selected_url),
         )
         if best_key is None or ranking_key > best_key:
             best_key = ranking_key
@@ -1358,7 +1422,7 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
             "status": "review",
             "confidence": 0.68,
             "reason": "Current website points to EasyChair, HotCRP, or EDAS. Use the public conference or CFP page instead.",
-            "selected_url": preferred_public_snapshot_url(snapshots[1:]),
+            "selected_url": preferred_public_snapshot_url(record, snapshots[1:]),
             "record": {},
         }
 
@@ -1448,6 +1512,7 @@ def sanitize_candidate_record(
                     and valid_url(candidate_url)
                     and not is_disallowed_conference_url(candidate_url)
                     and not is_pdf_url(candidate_url)
+                    and not is_incompatible_edition_url(original, candidate_url)
                     and not is_older_edition_url(original, candidate_url, original.get(field))
                     and candidate_url != original.get(field)
                 ):
@@ -1503,7 +1568,7 @@ def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot
     return not any(year and year in snapshot.text for year in expected_years)
 
 
-def preferred_public_snapshot_url(snapshots: list[PageSnapshot]) -> str | None:
+def preferred_public_snapshot_url(record: dict[str, str], snapshots: list[PageSnapshot]) -> str | None:
     for snapshot in snapshots:
         candidate_url = snapshot.final_url or snapshot.url
         if (
@@ -1511,6 +1576,7 @@ def preferred_public_snapshot_url(snapshots: list[PageSnapshot]) -> str | None:
             and valid_url(candidate_url)
             and not is_disallowed_conference_url(candidate_url)
             and not is_pdf_url(candidate_url)
+            and not is_incompatible_edition_url(record, candidate_url)
         ):
             return candidate_url
     return None
