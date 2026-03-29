@@ -25,7 +25,7 @@ conferences:
   conference_start: 02.12.2025
   conference_end: 05.12.2025
   location: Lyon, France
-  website: https://www.gcet-conference.com/GCET2025/index.php
+  website: https://www.gcet-conference.com/GCET2025/call-for-papers.php
 - name: IEEE Symposium on Computers and Communications
   acronym: ISCC
   ranking: C
@@ -70,7 +70,7 @@ conferences:
   conference_start: 23.03.2026
   conference_end: 27.03.2026
   location: Thessaloniki, Greece
-  website: https://www.sigapp.org/sac/sac2026/index.php
+  website: https://www.sigapp.org/sac/sac2026/file2026/SAC2026-CFP.pdf
 - name: International Performance Computing and Communications Conference
   acronym: IPCCC
   ranking: C
@@ -88,7 +88,7 @@ conferences:
   conference_start: 18.05.2026
   conference_end: 21.05.2026
   location: Sydney, Australia
-  website: https://ccgrid2026.cdms.westernsydney.edu.au/
+  website: https://ccgrid2026.cdms.westernsydney.edu.au/cfp.html
 - name: International Conference on Parallel, Distributed, and Network-based Processing
   acronym: PDP
   ranking: C
@@ -97,7 +97,7 @@ conferences:
   conference_start: 25.03.2026
   conference_end: 27.03.2026
   location: Cluj-Napoca, Romania
-  website: https://pdp2026.org/
+  website: https://www.pdp2026.org/submission/cfp/
 - name: IEEE/ACM International Symposium on Quality of Service
   acronym: IWQoS
   ranking: B
@@ -124,7 +124,7 @@ conferences:
   conference_start: 04.05.2026
   conference_end: 06.05.2026
   location: Detroit, USA
-  website: https://ieeemobility.org/MOST2026/
+  website: https://ieeemobility.org/MOST2026/call_for_papers.php
 - name: International Conference on Cognitive Machine Intelligence
   acronym: CogMi
   ranking: Unknown
@@ -151,7 +151,7 @@ conferences:
   conference_start: 24.11.2025
   conference_end: 26.11.2025
   location: Sharjah, UAE
-  website: https://dsa25.techconf.org/
+  website: https://dsa25.techconf.org/download/CFP-DSA-2025.pdf
 - name: International Conference on Service-Oriented System Engineering
   acronym: SOSE
   ranking: Unknown
@@ -236,7 +236,7 @@ conferences:
 - name: IEEE International Symposium on Real-Time Distributed Computing
   acronym: ISORC
   ranking: C
-  submission_deadline: 01.03.2026
+  submission_deadline: 03.03.2026
   notification: 24.03.2026
   conference_start: 27.05.2026
   conference_end: 29.05.2026
@@ -250,7 +250,7 @@ conferences:
   conference_start: 25.05.2026
   conference_end: 29.05.2026
   location: New Orleans, USA
-  website: https://www.ipdps.org/
+  website: https://www.ipdps.org/ipdps2026/2026-call-for-papers.html
 - name: IEEE International Conference on Pervasive Computing and Communications
   acronym: PERCOM
   ranking: A
@@ -295,7 +295,7 @@ conferences:
   conference_start: 19.11.2026
   conference_end: 21.11.2026
   location: Newcastle upon Tyne, United Kingdom
-  website: https://iot-conference.org/iot2026
+  website: https://iot-conference.org/iot2026/call-for-papers/
 - name: IEEE Latin American International Conference on the Internet of Things
   acronym: LC-IoT
   ranking: Unknown
@@ -349,7 +349,7 @@ conferences:
   conference_start: 13.07.2026
   conference_end: 18.07.2026
   location: Sydney, Australia
-  website: https://services.conferences.computer.org/2026/
+  website: https://services.conferences.computer.org/2026/wp-content/uploads/sites/4/2026/01/Flyer-SERVICES-Congress-2026.pdf
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
   ranking: A*
@@ -358,7 +358,7 @@ conferences:
   conference_start: 22.03.2026
   conference_end: 26.03.2026
   location: Pittsburgh, USA
-  website: https://www.asplos-conference.org/asplos2026/cfp/
+  website: https://www.asplos-conference.org/call-for-papers-asplos27/
 - name: European conference on parallel and distributed processing
   acronym: Euro-Par
   ranking: B
@@ -371,7 +371,7 @@ conferences:
 - name: International Conference on Future Internet of Things and Cloud
   acronym: FiCloud
   ranking: Unknown
-  submission_deadline: 25.03.2026
+  submission_deadline: 07.04.2026
   notification: 15.05.2026
   conference_start: 20.07.2026
   conference_end: 22.07.2026
