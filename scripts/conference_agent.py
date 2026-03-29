@@ -17,6 +17,7 @@ from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import yaml
 
@@ -78,6 +79,7 @@ DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-conferences)"
 LLM_MAX_RETRIES = 2
 LLM_BATCH_SIZE = 5
+LOCAL_TIMEZONE = ZoneInfo("Europe/Vienna")
 LLM_MAX_REQUESTS_PER_MINUTE = 10
 LLM_REQUEST_INTERVAL_SECONDS = 60 / LLM_MAX_REQUESTS_PER_MINUTE
 DISALLOWED_WEBSITE_HOST_FRAGMENTS = ("easychair", "hotcrp", "edas")
@@ -964,11 +966,27 @@ def finalize_analysis(
     )
 
 
-def should_skip_future_deadline(record: dict[str, str]) -> bool:
+def conference_label(record: dict[str, str]) -> str:
+    acronym = collapse_whitespace(record.get("acronym", ""))
+    name = collapse_whitespace(record.get("name", ""))
+    if acronym and name and acronym != name:
+        return f"{acronym} ({name})"
+    return acronym or name or "unknown conference"
+
+
+def should_process_past_deadline(record: dict[str, str]) -> tuple[bool, str]:
     deadline = parse_normalized_date(record.get("submission_deadline"))
     if not deadline:
-        return False
-    return deadline.date() > datetime.now(UTC).date()
+        return False, "submission deadline is missing or invalid"
+
+    deadline_text = deadline.strftime("%d.%m.%Y")
+    today = datetime.now(LOCAL_TIMEZONE).date()
+    if deadline.date() >= today:
+        if deadline.date() == today:
+            return False, f"submission deadline is today ({deadline_text})"
+        return False, f"submission deadline is in the future ({deadline_text})"
+
+    return True, f"submission deadline is in the past ({deadline_text})"
 
 
 def chunk_prepared_entries(
@@ -995,7 +1013,7 @@ def format_change_line(
 
 def build_report(
     processed: int,
-    skipped_future: int,
+    skipped: int,
     updated: list[tuple[dict[str, str], AnalysisResult]],
     reviews: list[AnalysisResult],
     unchanged: int,
@@ -1005,8 +1023,9 @@ def build_report(
         "# Conference Agent",
         "",
         f"- Mode: {'auto-update' if llm_mode else 'check-only'}",
+        "- Checked conferences: only entries with a submission deadline before today (Europe/Vienna).",
         f"- Processed conferences: {processed}",
-        f"- Skipped future deadlines: {skipped_future}",
+        f"- Skipped conferences: {skipped}",
         f"- Updated entries: {len(updated)}",
         f"- Needs review: {len(reviews)}",
         f"- Unchanged: {unchanged}",
@@ -1068,15 +1087,19 @@ def main() -> int:
     review_results: list[AnalysisResult] = []
     unchanged_count = 0
     processed_count = 0
-    skipped_future_count = 0
+    skipped_count = 0
     pending_llm_entries: list[PreparedConference] = []
 
     for index, conference in enumerate(conferences[:limit]):
-        if should_skip_future_deadline(conference):
-            skipped_future_count += 1
+        should_process, deadline_reason = should_process_past_deadline(conference)
+        label = conference_label(conference)
+        if not should_process:
+            skipped_count += 1
+            sys.stdout.write(f"[skip] {label}: {deadline_reason}\n")
             continue
 
         processed_count += 1
+        sys.stdout.write(f"[check] {label}: {deadline_reason}\n")
         prepared = prepare_conference(
             conference,
             timeout=args.timeout,
@@ -1141,7 +1164,7 @@ def main() -> int:
 
     report = build_report(
         processed=processed_count,
-        skipped_future=skipped_future_count,
+        skipped=skipped_count,
         updated=updated_results,
         reviews=review_results,
         unchanged=unchanged_count,
