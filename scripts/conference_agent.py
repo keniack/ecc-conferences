@@ -626,6 +626,47 @@ def preferred_linked_cfp_url(snapshot: PageSnapshot) -> str | None:
     return candidates[0].url if candidates else None
 
 
+def record_reference_year(record: dict[str, str]) -> int | None:
+    year = year_from_date(record.get("conference_start")) or year_from_date(
+        record.get("submission_deadline")
+    )
+    return int(year) if year and year.isdigit() else None
+
+
+def extract_year_hints(value: str | None) -> list[int]:
+    if not value:
+        return []
+    hints: set[int] = set()
+    for match in re.findall(r"(?<!\d)(20\d{2})(?!\d)", value):
+        hints.add(int(match))
+    for match in re.findall(r"(?<!\d)(2[5-9]|3\d)(?!\d)", value):
+        hints.add(2000 + int(match))
+    return sorted(hints)
+
+
+def url_edition_year(record: dict[str, str], url: str | None) -> int | None:
+    reference_year = record_reference_year(record)
+    year_hints = extract_year_hints(url)
+    if reference_year is None:
+        return max(year_hints) if year_hints else None
+
+    eligible_hints = [year for year in year_hints if year >= reference_year]
+    return max(eligible_hints) if eligible_hints else None
+
+
+def is_older_edition_url(
+    record: dict[str, str],
+    candidate_url: str | None,
+    baseline_url: str | None,
+) -> bool:
+    baseline_year = url_edition_year(record, baseline_url)
+    candidate_year = url_edition_year(record, candidate_url)
+    reference_year = record_reference_year(record)
+    if reference_year is None or baseline_year is None or candidate_year is None:
+        return False
+    return baseline_year > reference_year and candidate_year < baseline_year
+
+
 def cfp_url_signal_score(url: str | None) -> int:
     if not url or not valid_url(url) or is_disallowed_conference_url(url) or is_pdf_url(url):
         return -1
@@ -657,7 +698,11 @@ def merge_selected_url(
     selected_url = merged.get("selected_url")
     heuristic_selected_url = heuristic.get("selected_url") if heuristic else None
 
-    candidates = [candidate for candidate in (selected_url, heuristic_selected_url) if candidate]
+    candidates = [
+        candidate
+        for candidate in (current_url, selected_url, heuristic_selected_url)
+        if candidate and not is_older_edition_url(record, candidate, current_url)
+    ]
     if not candidates:
         return merged
 
@@ -921,7 +966,11 @@ def analyze_batch_with_llm(
 def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) -> dict[str, Any]:
     current = snapshots[0]
     linked_cfp_url = preferred_linked_cfp_url(current)
-    selected_url = linked_cfp_url or current.final_url or current.url
+    selected_url = merge_selected_url(
+        record,
+        {"selected_url": linked_cfp_url},
+        {"selected_url": current.final_url or current.url},
+    ).get("selected_url")
     if not current.ok:
         return {
             "status": "review",
@@ -1026,6 +1075,7 @@ def sanitize_candidate_record(
                     and valid_url(candidate_url)
                     and not is_disallowed_conference_url(candidate_url)
                     and not is_pdf_url(candidate_url)
+                    and not is_older_edition_url(original, candidate_url, original.get(field))
                     and candidate_url != original.get(field)
                 ):
                     updated[field] = candidate_url
