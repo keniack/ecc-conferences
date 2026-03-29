@@ -1712,6 +1712,12 @@ def format_log_date(value: datetime) -> str:
     return value.strftime("%d.%m.%Y")
 
 
+def conference_completion_date(record: dict[str, str]) -> datetime | None:
+    return parse_normalized_date(record.get("conference_end")) or parse_normalized_date(
+        record.get("conference_start")
+    )
+
+
 def should_process_conference(record: dict[str, str]) -> tuple[bool, str]:
     deadline = parse_normalized_date(record.get("submission_deadline"))
     if not deadline:
@@ -1725,17 +1731,20 @@ def should_process_conference(record: dict[str, str]) -> tuple[bool, str]:
             return False, f"submission deadline is today ({deadline_text})"
         return False, f"submission deadline is in the future ({deadline_text})"
 
-    if deadline_date.year < today.year:
-        return True, f"submission deadline is from a previous year ({deadline_text})"
-
     deadline_age_days = (today - deadline_date).days
-    if deadline_age_days > RECENT_DEADLINE_WINDOW_DAYS:
-        return (
-            False,
-            f"submission deadline is older than {RECENT_DEADLINE_WINDOW_DAYS} days in the current year ({deadline_text})",
-        )
+    if deadline_date.year == today.year and deadline_age_days <= RECENT_DEADLINE_WINDOW_DAYS:
+        return True, f"submission deadline is within the last {RECENT_DEADLINE_WINDOW_DAYS} days ({deadline_text})"
 
-    return True, f"submission deadline is within the last {RECENT_DEADLINE_WINDOW_DAYS} days ({deadline_text})"
+    completion = conference_completion_date(record)
+    if not completion:
+        return False, "conference start/end date is missing or invalid"
+
+    completion_date = completion.date()
+    completion_text = format_log_date(completion)
+    if completion_date < today:
+        return True, f"conference already happened (ended {completion_text})"
+
+    return False, f"conference has not happened yet (ends {completion_text})"
 
 
 def conference_processing_priority(record: dict[str, str]) -> tuple[int, int]:
@@ -1743,11 +1752,15 @@ def conference_processing_priority(record: dict[str, str]) -> tuple[int, int]:
     if not deadline:
         raise ValueError("conference_processing_priority requires a valid deadline")
 
+    today = datetime.now(LOCAL_TIMEZONE).date()
     deadline_ordinal = deadline.date().toordinal()
-    today_year = datetime.now(LOCAL_TIMEZONE).date().year
-    if deadline.date().year < today_year:
-        return (0, deadline_ordinal)
-    return (1, -deadline_ordinal)
+    deadline_age_days = (today - deadline.date()).days
+    if deadline.date().year == today.year and deadline_age_days <= RECENT_DEADLINE_WINDOW_DAYS:
+        return (0, -deadline_ordinal)
+
+    completion = conference_completion_date(record)
+    completion_ordinal = completion.date().toordinal() if completion else deadline_ordinal
+    return (1, -completion_ordinal)
 
 
 def chunk_prepared_entries(
@@ -1785,9 +1798,9 @@ def build_report(
         "",
         f"- Mode: {'auto-update' if llm_mode else 'check-only'}",
         (
-            "- Checked conferences: previous-year deadlines first (oldest first), "
-            f"then current-year deadlines from the last {RECENT_DEADLINE_WINDOW_DAYS} days "
-            "(most recent first)."
+            f"- Checked conferences: current-year deadlines from the last {RECENT_DEADLINE_WINDOW_DAYS} days "
+            "(most recent first), then older past deadlines for conferences that already happened "
+            "(most recent conference end first)."
         ),
         f"- Processed conferences: {processed}",
         f"- Skipped conferences: {skipped}",
