@@ -80,6 +80,7 @@ USER_AGENT = "ecc-conferences-agent/1.0 (+https://github.com/keniack/ecc-confere
 LLM_MAX_RETRIES = 2
 LLM_BATCH_SIZE = 5
 LOCAL_TIMEZONE = ZoneInfo("Europe/Vienna")
+RECENT_DEADLINE_WINDOW_DAYS = 30
 LLM_MAX_REQUESTS_PER_MINUTE = 10
 LLM_REQUEST_INTERVAL_SECONDS = 60 / LLM_MAX_REQUESTS_PER_MINUTE
 DISALLOWED_WEBSITE_HOST_FRAGMENTS = ("easychair", "hotcrp", "edas")
@@ -974,19 +975,46 @@ def conference_label(record: dict[str, str]) -> str:
     return acronym or name or "unknown conference"
 
 
-def should_process_past_deadline(record: dict[str, str]) -> tuple[bool, str]:
+def format_log_date(value: datetime) -> str:
+    return value.strftime("%d.%m.%Y")
+
+
+def should_process_conference(record: dict[str, str]) -> tuple[bool, str]:
     deadline = parse_normalized_date(record.get("submission_deadline"))
     if not deadline:
         return False, "submission deadline is missing or invalid"
 
-    deadline_text = deadline.strftime("%d.%m.%Y")
+    deadline_date = deadline.date()
+    deadline_text = format_log_date(deadline)
     today = datetime.now(LOCAL_TIMEZONE).date()
-    if deadline.date() >= today:
-        if deadline.date() == today:
+    if deadline_date >= today:
+        if deadline_date == today:
             return False, f"submission deadline is today ({deadline_text})"
         return False, f"submission deadline is in the future ({deadline_text})"
 
-    return True, f"submission deadline is in the past ({deadline_text})"
+    if deadline_date.year < today.year:
+        return True, f"submission deadline is from a previous year ({deadline_text})"
+
+    deadline_age_days = (today - deadline_date).days
+    if deadline_age_days > RECENT_DEADLINE_WINDOW_DAYS:
+        return (
+            False,
+            f"submission deadline is older than {RECENT_DEADLINE_WINDOW_DAYS} days in the current year ({deadline_text})",
+        )
+
+    return True, f"submission deadline is within the last {RECENT_DEADLINE_WINDOW_DAYS} days ({deadline_text})"
+
+
+def conference_processing_priority(record: dict[str, str]) -> tuple[int, int]:
+    deadline = parse_normalized_date(record.get("submission_deadline"))
+    if not deadline:
+        raise ValueError("conference_processing_priority requires a valid deadline")
+
+    deadline_ordinal = deadline.date().toordinal()
+    today_year = datetime.now(LOCAL_TIMEZONE).date().year
+    if deadline.date().year < today_year:
+        return (0, deadline_ordinal)
+    return (1, -deadline_ordinal)
 
 
 def chunk_prepared_entries(
@@ -1023,7 +1051,11 @@ def build_report(
         "# Conference Agent",
         "",
         f"- Mode: {'auto-update' if llm_mode else 'check-only'}",
-        "- Checked conferences: only entries with a submission deadline before today (Europe/Vienna).",
+        (
+            "- Checked conferences: previous-year deadlines first (oldest first), "
+            f"then current-year deadlines from the last {RECENT_DEADLINE_WINDOW_DAYS} days "
+            "(most recent first)."
+        ),
         f"- Processed conferences: {processed}",
         f"- Skipped conferences: {skipped}",
         f"- Updated entries: {len(updated)}",
@@ -1089,15 +1121,37 @@ def main() -> int:
     processed_count = 0
     skipped_count = 0
     pending_llm_entries: list[PreparedConference] = []
+    selected_conferences: list[tuple[tuple[int, int], int, dict[str, str], str, str]] = []
 
-    for index, conference in enumerate(conferences[:limit]):
-        should_process, deadline_reason = should_process_past_deadline(conference)
+    for index, conference in enumerate(conferences):
+        should_process, deadline_reason = should_process_conference(conference)
         label = conference_label(conference)
         if not should_process:
             skipped_count += 1
             sys.stdout.write(f"[skip] {label}: {deadline_reason}\n")
             continue
 
+        selected_conferences.append(
+            (
+                conference_processing_priority(conference),
+                index,
+                conference,
+                label,
+                deadline_reason,
+            )
+        )
+
+    selected_conferences.sort(key=lambda entry: entry[0])
+
+    if args.limit is not None and len(selected_conferences) > limit:
+        for _, _, _, label, _ in selected_conferences[limit:]:
+            skipped_count += 1
+            sys.stdout.write(
+                f"[skip] {label}: deferred by --limit {limit} after priority sorting\n"
+            )
+        selected_conferences = selected_conferences[:limit]
+
+    for _, index, conference, label, deadline_reason in selected_conferences:
         processed_count += 1
         sys.stdout.write(f"[check] {label}: {deadline_reason}\n")
         prepared = prepare_conference(
