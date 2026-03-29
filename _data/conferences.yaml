@@ -93,7 +93,7 @@ conferences:
   acronym: PDP
   ranking: C
   submission_deadline: 09.11.2025
-  notification: 07.12.2025
+  notification: 21.12.2025
   conference_start: 25.03.2026
   conference_end: 27.03.2026
   location: Cluj-Napoca, Romania
@@ -151,7 +151,7 @@ conferences:
   conference_start: 24.11.2025
   conference_end: 26.11.2025
   location: Sharjah, UAE
-  website: https://dsa25.techconf.org/download/CFP-DSA-2025.pdf
+  website: https://dsa25.techconf.org/submission
 - name: International Conference on Service-Oriented System Engineering
   acronym: SOSE
   ranking: Unknown
@@ -358,7 +358,7 @@ conferences:
   conference_start: 22.03.2026
   conference_end: 26.03.2026
   location: Pittsburgh, USA
-  website: https://www.asplos-conference.org/call-for-papers-asplos27/
+  website: https://www.asplos-conference.org/asplos2026/cfp/
 - name: European conference on parallel and distributed processing
   acronym: Euro-Par
   ranking: B
