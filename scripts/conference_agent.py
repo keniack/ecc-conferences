@@ -176,6 +176,8 @@ class AnalysisResult:
     selected_url: str | None
     changed_fields: list[str]
     updated_record: dict[str, str]
+    applied_fields: list[str] = field(default_factory=list)
+    applied_record: dict[str, str] = field(default_factory=dict)
     review_note: str | None = None
 
 
@@ -615,6 +617,53 @@ def linked_cfp_candidates(snapshot: PageSnapshot, limit: int = 5) -> list[PageLi
 def preferred_linked_cfp_url(snapshot: PageSnapshot) -> str | None:
     candidates = linked_cfp_candidates(snapshot, limit=1)
     return candidates[0].url if candidates else None
+
+
+def cfp_url_signal_score(url: str | None) -> int:
+    if not url or not valid_url(url) or is_disallowed_conference_url(url):
+        return -1
+    parsed = urllib.parse.urlparse(url)
+    signal_text = f"{parsed.path} {parsed.query}".lower()
+    score = 0
+    if "/cfp" in parsed.path.lower() or "cfp" in signal_text:
+        score += 8
+    if "call-for-papers" in signal_text or "call for papers" in signal_text:
+        score += 8
+    if "important-dates" in signal_text or "important dates" in signal_text:
+        score += 6
+    if "submission" in signal_text:
+        score += 4
+    if "deadline" in signal_text:
+        score += 4
+    if "research" in signal_text:
+        score += 1
+    return score
+
+
+def merge_selected_url(
+    record: dict[str, str],
+    analysis: dict[str, Any],
+    heuristic: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    merged = dict(analysis)
+    current_url = record.get("website")
+    selected_url = merged.get("selected_url")
+    heuristic_selected_url = heuristic.get("selected_url") if heuristic else None
+
+    candidates = [candidate for candidate in (selected_url, heuristic_selected_url) if candidate]
+    if not candidates:
+        return merged
+
+    best_url = max(
+        candidates,
+        key=lambda candidate: (
+            cfp_url_signal_score(str(candidate)),
+            str(candidate) != (current_url or ""),
+        ),
+    )
+    if best_url:
+        merged["selected_url"] = best_url
+    return merged
 
 
 def detect_deadline_extension_signal(
@@ -1063,11 +1112,16 @@ def finalize_analysis(
     confidence = float(analysis.get("confidence", 0.0) or 0.0)
     reason = collapse_whitespace(str(analysis.get("reason", "No explanation provided.")))
     selected_url = analysis.get("selected_url")
+    applied_fields: list[str] = []
+    applied_record = dict(record)
 
     if status == "update" and confidence < min_confidence:
         review_note = (
             f"Model suggested an update at confidence {confidence:.2f}, below the configured threshold."
         )
+        if "website" in changed_fields:
+            applied_fields = ["website"]
+            applied_record["website"] = updated_record["website"]
         return AnalysisResult(
             acronym=record["acronym"],
             status="review",
@@ -1076,6 +1130,8 @@ def finalize_analysis(
             selected_url=selected_url,
             changed_fields=changed_fields,
             updated_record=record,
+            applied_fields=applied_fields,
+            applied_record=applied_record,
             review_note=review_note,
         )
 
@@ -1084,6 +1140,13 @@ def finalize_analysis(
         reason = "Model returned update, but no allowed fields changed."
 
     review_note = None
+    if status == "update":
+        applied_fields = list(changed_fields)
+        applied_record = updated_record
+    elif "website" in changed_fields:
+        applied_fields = ["website"]
+        applied_record["website"] = updated_record["website"]
+
     if status == "review":
         review_note = reason
 
@@ -1095,6 +1158,8 @@ def finalize_analysis(
         selected_url=selected_url,
         changed_fields=changed_fields,
         updated_record=updated_record if status == "update" else record,
+        applied_fields=applied_fields,
+        applied_record=applied_record,
         review_note=review_note,
     )
 
@@ -1190,7 +1255,7 @@ def build_report(
         ),
         f"- Processed conferences: {processed}",
         f"- Skipped conferences: {skipped}",
-        f"- Updated entries: {len(updated)}",
+        f"- Applied updates: {len(updated)}",
         f"- Needs review: {len(reviews)}",
         f"- Unchanged: {unchanged}",
         "",
@@ -1203,9 +1268,9 @@ def build_report(
             lines.append(
                 format_change_line(
                     result.acronym,
-                    result.changed_fields,
+                    result.applied_fields,
                     original,
-                    result.updated_record,
+                    result.applied_record,
                 )
             )
         lines.append("")
@@ -1215,6 +1280,10 @@ def build_report(
         lines.append("")
         for result in reviews:
             detail = result.review_note or result.reason
+            if result.applied_fields:
+                detail = collapse_whitespace(
+                    f"{detail} Auto-applied fields: {', '.join(result.applied_fields)}."
+                )
             suffix = f" URL: {result.selected_url}" if result.selected_url else ""
             lines.append(
                 f"- `{result.acronym}`: {detail} (confidence {result.confidence:.2f}).{suffix}"
@@ -1302,13 +1371,13 @@ def main() -> int:
             prepared.heuristic,
             args.min_confidence,
         )
-        if result.status == "update":
+        if result.applied_fields:
             original = dict(conference)
-            conferences[index] = result.updated_record
+            conferences[index] = result.applied_record
             updated_results.append((original, result))
-        elif result.status == "review":
+        if result.status == "review":
             review_results.append(result)
-        else:
+        elif not result.applied_fields:
             unchanged_count += 1
 
     for batch in chunk_prepared_entries(pending_llm_entries, LLM_BATCH_SIZE):
@@ -1330,19 +1399,24 @@ def main() -> int:
                     prepared.snapshots[0],
                     fallback_exc,
                 )
+            analysis = merge_selected_url(
+                prepared.record,
+                analysis,
+                prepared.heuristic,
+            )
 
             result = finalize_analysis(
                 prepared.record,
                 analysis,
                 args.min_confidence,
             )
-            if result.status == "update":
+            if result.applied_fields:
                 original = dict(prepared.record)
-                conferences[prepared.index] = result.updated_record
+                conferences[prepared.index] = result.applied_record
                 updated_results.append((original, result))
-            elif result.status == "review":
+            if result.status == "review":
                 review_results.append(result)
-            else:
+            elif not result.applied_fields:
                 unchanged_count += 1
 
     if args.write and updated_results:

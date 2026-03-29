@@ -241,7 +241,7 @@ conferences:
   conference_start: 27.05.2026
   conference_end: 29.05.2026
   location: Hamilton, Canada
-  website: https://mcscert.github.io/isorc2026
+  website: https://mcscert.github.io/isorc2026/cfp/research.html
 - name: IEEE International Parallel and Distributed Processing Symposium
   acronym: IPDPS
   ranking: A
@@ -376,7 +376,7 @@ conferences:
   conference_start: 20.07.2026
   conference_end: 22.07.2026
   location: Granada, Spain
-  website: https://ficloud.org/2026
+  website: https://www.ficloud.org/2026/cfp.php
 - name: IEEE International Conference on Cloud Engineering
   acronym: IC2E
   ranking: Unknown
