@@ -942,11 +942,6 @@ def extract_structured_updates_from_snapshot(
             reasons.append("conference dates")
             break
 
-    location = extract_location_value(snapshot.lines)
-    if location:
-        updates["location"] = location
-        reasons.append("location")
-
     if not updates:
         return None
 
@@ -1499,12 +1494,14 @@ def sanitize_candidate_record(
     original: dict[str, str],
     proposed: dict[str, Any] | None,
     selected_url: str | None,
+    allowed_fields: tuple[str, ...] = AUTO_UPDATE_FIELDS,
+    allow_selected_url_for_website: bool = True,
 ) -> tuple[dict[str, str], list[str]]:
     updated = dict(original)
     changed_fields: list[str] = []
     proposed = proposed or {}
 
-    for field in AUTO_UPDATE_FIELDS:
+    for field in allowed_fields:
         incoming = proposed.get(field)
         if field in DATE_FIELDS:
             normalized = normalize_date(str(incoming).strip()) if incoming else None
@@ -1515,7 +1512,7 @@ def sanitize_candidate_record(
 
         if field == "website":
             candidate_urls = []
-            if selected_url:
+            if selected_url and allow_selected_url_for_website:
                 candidate_urls.append(selected_url)
             if incoming:
                 candidate_urls.append(str(incoming).strip())
@@ -1557,10 +1554,11 @@ def promote_heuristic_analysis(
         record,
         promoted.get("record"),
         promoted.get("selected_url"),
+        allowed_fields=DATE_FIELDS,
     )
     if changed_fields:
         promoted["status"] = "update"
-    elif promoted.get("record"):
+    elif any(field in DATE_FIELDS for field in (promoted.get("record") or {})):
         promoted["status"] = "unchanged"
     return promoted
 
@@ -1642,11 +1640,15 @@ def finalize_analysis(
     record: dict[str, str],
     analysis: dict[str, Any],
     min_confidence: float,
+    allowed_fields: tuple[str, ...] = AUTO_UPDATE_FIELDS,
+    allow_selected_url_for_website: bool = True,
 ) -> AnalysisResult:
     updated_record, changed_fields = sanitize_candidate_record(
         record,
         analysis.get("record"),
         analysis.get("selected_url"),
+        allowed_fields=allowed_fields,
+        allow_selected_url_for_website=allow_selected_url_for_website,
     )
     status = str(analysis.get("status", "review")).strip().lower()
     confidence = float(analysis.get("confidence", 0.0) or 0.0)
@@ -1659,9 +1661,6 @@ def finalize_analysis(
         review_note = (
             f"Model suggested an update at confidence {confidence:.2f}, below the configured threshold."
         )
-        if "website" in changed_fields:
-            applied_fields = ["website"]
-            applied_record["website"] = updated_record["website"]
         return AnalysisResult(
             acronym=record["acronym"],
             status="review",
@@ -1683,9 +1682,6 @@ def finalize_analysis(
     if status == "update":
         applied_fields = list(changed_fields)
         applied_record = updated_record
-    elif "website" in changed_fields:
-        applied_fields = ["website"]
-        applied_record["website"] = updated_record["website"]
 
     if status == "review":
         review_note = reason
@@ -1910,6 +1906,8 @@ def main() -> int:
             conference,
             heuristic_analysis,
             args.heuristic_min_confidence,
+            allowed_fields=DATE_FIELDS,
+            allow_selected_url_for_website=False,
         )
 
         if llm_enabled() and heuristic_result.status == "review":
@@ -1936,6 +1934,7 @@ def main() -> int:
 
         for prepared in batch:
             analysis = batch_analysis.get(prepared.index)
+            llm_selected_url_confirmed = False
             if analysis is None:
                 fallback_exc = batch_error or ValueError(
                     f"LLM batch response omitted conference id {prepared.index}"
@@ -1945,6 +1944,8 @@ def main() -> int:
                     prepared.snapshots[0],
                     fallback_exc,
                 )
+            else:
+                llm_selected_url_confirmed = bool(analysis.get("selected_url"))
             analysis = merge_selected_url(
                 prepared.record,
                 analysis,
@@ -1955,6 +1956,7 @@ def main() -> int:
                 prepared.record,
                 analysis,
                 args.min_confidence,
+                allow_selected_url_for_website=llm_selected_url_confirmed,
             )
             if result.applied_fields:
                 original = dict(prepared.record)
