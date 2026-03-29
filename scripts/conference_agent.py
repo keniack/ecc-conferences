@@ -863,14 +863,27 @@ def extract_location_value(lines: list[str]) -> str | None:
             return None
         if ":" in cleaned:
             return None
-        if "," not in cleaned:
+        if any(marker in cleaned for marker in (".", "!", "?", ";", "/", "http")):
             return None
-        left, right = [part.strip() for part in cleaned.split(",", 1)]
-        if len(left) < 2 or len(right) < 2:
+        if any(char.isdigit() for char in cleaned):
             return None
-        if not re.search(r"[A-Za-z]", left + right):
+        if len(cleaned) > 80:
             return None
-        return cleaned
+        words = re.findall(r"[A-Za-z][A-Za-z'&.-]*", cleaned)
+        if not words or len(words) > 8:
+            return None
+        if cleaned.count(",") > 2:
+            return None
+        if "," in cleaned:
+            parts = [part.strip() for part in cleaned.split(",")]
+            if any(len(part) < 2 for part in parts):
+                return None
+            if not re.search(r"[A-Za-z]", "".join(parts)):
+                return None
+            return cleaned
+        if len(words) <= 2 and cleaned == cleaned.title():
+            return cleaned
+        return None
 
     for index, line in enumerate(lines):
         lowered = line.lower()
