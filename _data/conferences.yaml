@@ -292,8 +292,8 @@ conferences:
   ranking: Unknown
   submission_deadline: 01.08.2025
   notification: 03.09.2025
-  conference_start: 19.11.2026
-  conference_end: 21.11.2026
+  conference_start: 19.11.2025
+  conference_end: 21.11.2025
   location: Newcastle upon Tyne, United Kingdom
   website: https://iot-conference.org/iot2026/call-for-papers/
 - name: IEEE Latin American International Conference on the Internet of Things
@@ -418,8 +418,8 @@ conferences:
   ranking: Unknown
   submission_deadline: 19.09.2025
   notification: 07.10.2025
-  conference_start: 01.12.2026
-  conference_end: 04.12.2026
+  conference_start: 01.12.2025
+  conference_end: 04.12.2025
   location: Florianopolis, Brazil
   website: https://ucc-conference.org/
 - name: IEEE International Conference on Big Data
