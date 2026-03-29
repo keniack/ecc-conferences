@@ -63,6 +63,64 @@ DEADLINE_CONTEXT_KEYWORDS = (
     "submission",
     "deadline",
 )
+SUBMISSION_LINE_LABELS = (
+    "submission deadline",
+    "paper submission deadline",
+    "paper submission",
+    "full paper submission",
+    "submission due",
+)
+NOTIFICATION_LINE_LABELS = (
+    "notification",
+    "author notification",
+    "authors notification",
+    "acceptance notification",
+)
+CONFERENCE_DATE_LINE_LABELS = (
+    "conference dates",
+    "conference date",
+    "event dates",
+    "symposium dates",
+)
+LOCATION_LINE_LABELS = ("location", "venue")
+BLOCK_BREAK_TAGS = {
+    "address",
+    "article",
+    "aside",
+    "blockquote",
+    "br",
+    "dd",
+    "div",
+    "dl",
+    "dt",
+    "fieldset",
+    "figcaption",
+    "figure",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hr",
+    "li",
+    "main",
+    "nav",
+    "ol",
+    "p",
+    "section",
+    "table",
+    "tbody",
+    "td",
+    "tfoot",
+    "th",
+    "thead",
+    "tr",
+    "ul",
+}
 MONTH_PATTERN = (
     r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
     r"Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
@@ -150,6 +208,44 @@ class LinkExtractor(HTMLParser):
         return self._links
 
 
+class LineExtractor(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self._ignored_depth = 0
+        self._chunks: list[str] = []
+        self._lines: list[str] = []
+
+    def _flush_line(self) -> None:
+        if not self._chunks:
+            return
+        line = collapse_whitespace(" ".join(self._chunks))
+        if line:
+            self._lines.append(line)
+        self._chunks = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in {"script", "style", "noscript"}:
+            self._ignored_depth += 1
+            return
+        if not self._ignored_depth and tag in BLOCK_BREAK_TAGS:
+            self._flush_line()
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style", "noscript"} and self._ignored_depth:
+            self._ignored_depth -= 1
+            return
+        if not self._ignored_depth and tag in BLOCK_BREAK_TAGS:
+            self._flush_line()
+
+    def handle_data(self, data: str) -> None:
+        if not self._ignored_depth:
+            self._chunks.append(data)
+
+    def lines(self) -> list[str]:
+        self._flush_line()
+        return self._lines
+
+
 @dataclass
 class PageLink:
     url: str
@@ -165,6 +261,7 @@ class PageSnapshot:
     status_code: int | None = None
     error: str | None = None
     links: list[PageLink] = field(default_factory=list)
+    lines: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -221,7 +318,13 @@ def parse_args() -> argparse.Namespace:
         "--min-confidence",
         type=float,
         default=0.88,
-        help="Minimum model confidence required for automatic updates.",
+        help="Minimum LLM confidence required for automatic updates.",
+    )
+    parser.add_argument(
+        "--heuristic-min-confidence",
+        type=float,
+        default=0.72,
+        help="Minimum heuristic confidence required for automatic updates before using the LLM.",
     )
     parser.add_argument(
         "--search-fallback",
@@ -278,6 +381,7 @@ def fetch_page(url: str, timeout: int) -> PageSnapshot:
             final_url = response.geturl()
             text = extract_text(html)
             links = extract_links(html, final_url)
+            lines = extract_lines(html)
             status_code = getattr(response, "status", None)
             return PageSnapshot(
                 url=url,
@@ -286,6 +390,7 @@ def fetch_page(url: str, timeout: int) -> PageSnapshot:
                 ok=True,
                 status_code=status_code,
                 links=links,
+                lines=lines,
             )
     except urllib.error.HTTPError as exc:
         return PageSnapshot(
@@ -318,6 +423,12 @@ def extract_text(html: str) -> str:
     parser = TextExtractor()
     parser.feed(html)
     return collapse_whitespace(unescape(parser.text()))
+
+
+def extract_lines(html: str) -> list[str]:
+    parser = LineExtractor()
+    parser.feed(html)
+    return parser.lines()
 
 
 def extract_links(html: str, base_url: str) -> list[PageLink]:
@@ -577,6 +688,228 @@ def extract_date_candidates(text: str) -> list[str]:
             if normalized:
                 candidates.append(normalized)
     return dedupe_preserve_order(candidates)
+
+
+def extract_ordered_date_candidates(text: str) -> list[str]:
+    positioned_candidates: list[tuple[int, str]] = []
+    for pattern in DATE_CANDIDATE_PATTERNS:
+        for match in pattern.finditer(text):
+            normalized = normalize_date(match.group(0))
+            if normalized:
+                positioned_candidates.append((match.start(), normalized))
+    positioned_candidates.sort(key=lambda item: item[0])
+    return dedupe_preserve_order([candidate for _, candidate in positioned_candidates])
+
+
+def is_allowed_candidate_date(record: dict[str, str], candidate: str) -> bool:
+    candidate_date = parse_normalized_date(candidate)
+    reference_year = record_reference_year(record)
+    if not candidate_date or reference_year is None:
+        return bool(candidate_date)
+    return candidate_date.year in {reference_year, reference_year + 1}
+
+
+def contextual_line_windows(
+    lines: list[str],
+    labels: tuple[str, ...],
+    *,
+    lookahead: int = 2,
+) -> list[str]:
+    windows: list[str] = []
+    for index, line in enumerate(lines):
+        lowered = line.lower()
+        if any(label in lowered for label in labels):
+            windows.append(" ".join(lines[index : index + lookahead + 1]))
+    return windows
+
+
+def select_candidates(
+    record: dict[str, str],
+    text: str,
+    *,
+    prefer_latest: bool = False,
+) -> str | None:
+    candidates = [
+        candidate
+        for candidate in extract_ordered_date_candidates(text)
+        if is_allowed_candidate_date(record, candidate)
+    ]
+    if not candidates:
+        return None
+    if prefer_latest:
+        return max(candidates, key=parse_normalized_date)
+    return candidates[0]
+
+
+def extract_labeled_date(
+    record: dict[str, str],
+    lines: list[str],
+    labels: tuple[str, ...],
+    *,
+    prefer_latest: bool = False,
+) -> str | None:
+    for index, line in enumerate(lines):
+        lowered = line.lower()
+        if not any(label in lowered for label in labels):
+            continue
+
+        same_line_candidate = select_candidates(
+            record,
+            line,
+            prefer_latest=prefer_latest,
+        )
+        if same_line_candidate:
+            return same_line_candidate
+
+        if index + 1 < len(lines):
+            next_line_candidate = select_candidates(
+                record,
+                " ".join(lines[index : index + 2]),
+                prefer_latest=prefer_latest,
+            )
+            if next_line_candidate:
+                return next_line_candidate
+    return None
+
+
+def parse_conference_date_range(record: dict[str, str], context: str) -> tuple[str, str] | None:
+    same_month_match = re.search(
+        rf"({MONTH_PATTERN})\s+(\d{{1,2}})\s*(?:-|–|to)\s*(\d{{1,2}}),\s*(\d{{4}})",
+        context,
+        re.IGNORECASE,
+    )
+    if same_month_match:
+        month, start_day, end_day, year = same_month_match.groups()
+        start = normalize_date(f"{month} {start_day}, {year}")
+        end = normalize_date(f"{month} {end_day}, {year}")
+        if (
+            start
+            and end
+            and is_allowed_candidate_date(record, start)
+            and is_allowed_candidate_date(record, end)
+        ):
+            return start, end
+
+    split_month_match = re.search(
+        rf"({MONTH_PATTERN})\s+(\d{{1,2}})\s*(?:-|–|to)\s*({MONTH_PATTERN})\s+(\d{{1,2}}),\s*(\d{{4}})",
+        context,
+        re.IGNORECASE,
+    )
+    if split_month_match:
+        start_month, start_day, end_month, end_day, year = split_month_match.groups()
+        start = normalize_date(f"{start_month} {start_day}, {year}")
+        end = normalize_date(f"{end_month} {end_day}, {year}")
+        if (
+            start
+            and end
+            and is_allowed_candidate_date(record, start)
+            and is_allowed_candidate_date(record, end)
+        ):
+            return start, end
+
+    day_range_match = re.search(
+        rf"(\d{{1,2}})\s*(?:-|–|to)\s*(\d{{1,2}})\s+({MONTH_PATTERN})\s+(\d{{4}})",
+        context,
+        re.IGNORECASE,
+    )
+    if day_range_match:
+        start_day, end_day, month, year = day_range_match.groups()
+        start = normalize_date(f"{month} {start_day}, {year}")
+        end = normalize_date(f"{month} {end_day}, {year}")
+        if (
+            start
+            and end
+            and is_allowed_candidate_date(record, start)
+            and is_allowed_candidate_date(record, end)
+        ):
+            return start, end
+
+    ordered_candidates = [
+        candidate
+        for candidate in extract_ordered_date_candidates(context)
+        if is_allowed_candidate_date(record, candidate)
+    ]
+    if len(ordered_candidates) >= 2:
+        return ordered_candidates[0], ordered_candidates[1]
+    return None
+
+
+def extract_location_value(lines: list[str]) -> str | None:
+    for index, line in enumerate(lines):
+        lowered = line.lower()
+        if not any(label in lowered for label in LOCATION_LINE_LABELS):
+            continue
+        match = re.search(r"(?:location|venue)\s*[:\-]\s*(.+)", line, re.IGNORECASE)
+        if match:
+            return collapse_whitespace(match.group(1))
+        if index + 1 < len(lines):
+            candidate = collapse_whitespace(lines[index + 1])
+            if candidate and ":" not in candidate and len(candidate) >= 4:
+                return candidate
+    return None
+
+
+def extract_structured_updates_from_snapshot(
+    record: dict[str, str],
+    snapshot: PageSnapshot,
+) -> tuple[dict[str, str], float, str] | None:
+    if not snapshot.ok or not snapshot.lines:
+        return None
+
+    updates: dict[str, str] = {}
+    reasons: list[str] = []
+
+    extended_deadline, _ = detect_deadline_extension_signal(record, snapshot)
+    if extended_deadline:
+        updates["submission_deadline"] = extended_deadline
+        reasons.append("extended submission deadline")
+
+    submission_deadline = extract_labeled_date(
+        record,
+        snapshot.lines,
+        SUBMISSION_LINE_LABELS,
+        prefer_latest=True,
+    )
+    if submission_deadline and "submission_deadline" not in updates:
+        updates["submission_deadline"] = submission_deadline
+        reasons.append("submission deadline")
+
+    notification = extract_labeled_date(
+        record,
+        snapshot.lines,
+        NOTIFICATION_LINE_LABELS,
+    )
+    if notification:
+        updates["notification"] = notification
+        reasons.append("notification date")
+
+    for context in contextual_line_windows(snapshot.lines, CONFERENCE_DATE_LINE_LABELS):
+        conference_dates = parse_conference_date_range(record, context)
+        if conference_dates:
+            updates["conference_start"], updates["conference_end"] = conference_dates
+            reasons.append("conference dates")
+            break
+
+    location = extract_location_value(snapshot.lines)
+    if location:
+        updates["location"] = location
+        reasons.append("location")
+
+    if not updates:
+        return None
+
+    explicit_field_count = len(updates)
+    confidence = 0.74
+    if explicit_field_count >= 2:
+        confidence = 0.8
+    if explicit_field_count >= 4:
+        confidence = 0.86
+
+    source_url = snapshot.final_url or snapshot.url
+    reason = collapse_whitespace(
+        f"Heuristically extracted {', '.join(reasons)} from {source_url}."
+    )
+    return updates, confidence, reason
 
 
 def cfp_link_score(snapshot: PageSnapshot, link: PageLink) -> int:
@@ -963,6 +1296,41 @@ def analyze_batch_with_llm(
     return parsed_results
 
 
+def best_structured_heuristic_result(
+    record: dict[str, str],
+    snapshots: list[PageSnapshot],
+) -> dict[str, Any] | None:
+    best_result: dict[str, Any] | None = None
+    best_key: tuple[int, float, int] | None = None
+
+    for snapshot in snapshots:
+        extracted = extract_structured_updates_from_snapshot(record, snapshot)
+        if not extracted:
+            continue
+        updates, confidence, reason = extracted
+        selected_url = merge_selected_url(
+            record,
+            {"selected_url": snapshot.final_url or snapshot.url},
+            {"selected_url": preferred_linked_cfp_url(snapshot)},
+        ).get("selected_url")
+        ranking_key = (
+            len(updates),
+            confidence,
+            cfp_url_signal_score(selected_url),
+        )
+        if best_key is None or ranking_key > best_key:
+            best_key = ranking_key
+            best_result = {
+                "status": "review",
+                "confidence": confidence,
+                "reason": reason,
+                "selected_url": selected_url,
+                "record": updates,
+            }
+
+    return best_result
+
+
 def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) -> dict[str, Any]:
     current = snapshots[0]
     linked_cfp_url = preferred_linked_cfp_url(current)
@@ -971,6 +1339,11 @@ def heuristic_analysis(record: dict[str, str], snapshots: list[PageSnapshot]) ->
         {"selected_url": linked_cfp_url},
         {"selected_url": current.final_url or current.url},
     ).get("selected_url")
+
+    structured_result = best_structured_heuristic_result(record, snapshots)
+    if structured_result:
+        return structured_result
+
     if not current.ok:
         return {
             "status": "review",
@@ -1090,6 +1463,28 @@ def sanitize_candidate_record(
                 changed_fields.append(field)
 
     return updated, changed_fields
+
+
+def promote_heuristic_analysis(
+    record: dict[str, str],
+    analysis: dict[str, Any],
+    min_confidence: float,
+) -> dict[str, Any]:
+    promoted = dict(analysis)
+    confidence = float(promoted.get("confidence", 0.0) or 0.0)
+    if confidence < min_confidence:
+        return promoted
+
+    _, changed_fields = sanitize_candidate_record(
+        record,
+        promoted.get("record"),
+        promoted.get("selected_url"),
+    )
+    if changed_fields:
+        promoted["status"] = "update"
+    elif promoted.get("record"):
+        promoted["status"] = "unchanged"
+    return promoted
 
 
 def should_search_for_replacement(record: dict[str, str], snapshot: PageSnapshot) -> bool:
@@ -1427,16 +1822,22 @@ def main() -> int:
             search_fallback=args.search_fallback,
         )
         prepared.index = index
+        heuristic_analysis = promote_heuristic_analysis(
+            conference,
+            prepared.heuristic,
+            args.heuristic_min_confidence,
+        )
+        heuristic_result = finalize_analysis(
+            conference,
+            heuristic_analysis,
+            args.heuristic_min_confidence,
+        )
 
-        if llm_enabled() and prepared.heuristic.get("status") != "unchanged":
+        if llm_enabled() and heuristic_result.status == "review":
             pending_llm_entries.append(prepared)
             continue
 
-        result = finalize_analysis(
-            conference,
-            prepared.heuristic,
-            args.min_confidence,
-        )
+        result = heuristic_result
         if result.applied_fields:
             original = dict(conference)
             conferences[index] = result.applied_record
