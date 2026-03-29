@@ -12,7 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -334,7 +334,7 @@ def search_candidate_urls(record: dict[str, str], timeout: int, limit: int = 3) 
     year_hint = (
         year_from_date(record.get("conference_start"))
         or year_from_date(record.get("submission_deadline"))
-        or str(datetime.utcnow().year)
+        or str(datetime.now(UTC).year)
     )
     query = f'{record["acronym"]} {year_hint} "{record["name"]}" call for papers'
     search_url = "https://html.duckduckgo.com/html/?" + urllib.parse.urlencode({"q": query})
@@ -968,7 +968,7 @@ def should_skip_future_deadline(record: dict[str, str]) -> bool:
     deadline = parse_normalized_date(record.get("submission_deadline"))
     if not deadline:
         return False
-    return deadline.date() > datetime.utcnow().date()
+    return deadline.date() > datetime.now(UTC).date()
 
 
 def chunk_prepared_entries(
