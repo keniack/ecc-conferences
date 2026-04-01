@@ -417,7 +417,7 @@ conferences:
   acronym: UCC
   ranking: Unknown
   submission_deadline: 19.09.2025
-  notification: 07.10.2025
+  notification: 20.10.2025
   conference_start: 01.12.2025
   conference_end: 04.12.2025
   location: Florianopolis, Brazil
@@ -443,7 +443,7 @@ conferences:
 - name: IEEE Smart World Congress
   acronym: SWC
   ranking: Unknown
-  submission_deadline: 01.04.2026
+  submission_deadline: 31.07.2026
   notification: 01.07.2026
   conference_start: 07.09.2026
   conference_end: 11.09.2026
