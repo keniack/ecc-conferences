@@ -83,6 +83,32 @@ CONFERENCE_DATE_LINE_LABELS = (
     "symposium dates",
 )
 LOCATION_LINE_LABELS = ("location", "venue")
+SCHEDULE_BLOCK_BOUNDARY_LABELS = (
+    "submission deadline",
+    "paper submission deadline",
+    "paper submission",
+    "full paper submission",
+    "submission due",
+    "notification",
+    "author notification",
+    "authors notification",
+    "acceptance notification",
+    "conference dates",
+    "conference date",
+    "event dates",
+    "symposium dates",
+    "location",
+    "venue",
+    "camera-ready",
+    "camera ready",
+    "registration",
+    "early registration",
+    "abstract deadline",
+    "abstract submission",
+    "acceptance",
+    "rebuttal",
+    "author response",
+)
 DISALLOWED_LOCATION_PHRASES = (
     "accommodation",
     "call for papers",
@@ -720,6 +746,23 @@ def extract_ordered_date_candidates(text: str) -> list[str]:
     return dedupe_preserve_order([candidate for _, candidate in positioned_candidates])
 
 
+def trim_context_at_schedule_boundary(text: str, labels: tuple[str, ...]) -> str:
+    lowered = text.lower()
+    allowed_labels = {label.lower() for label in labels}
+    cutoff = len(text)
+
+    for boundary in SCHEDULE_BLOCK_BOUNDARY_LABELS:
+        if boundary in allowed_labels:
+            continue
+        position = lowered.find(boundary)
+        if position == 0:
+            return ""
+        if position > 0:
+            cutoff = min(cutoff, position)
+
+    return collapse_whitespace(text[:cutoff])
+
+
 def is_allowed_candidate_date(record: dict[str, str], candidate: str) -> bool:
     candidate_date = parse_normalized_date(candidate)
     reference_year = record_reference_year(record)
@@ -760,34 +803,55 @@ def select_candidates(
     return candidates[0]
 
 
+def build_labeled_date_context(
+    lines: list[str],
+    index: int,
+    labels: tuple[str, ...],
+    *,
+    max_following_lines: int = 2,
+) -> str:
+    context_lines: list[str] = []
+
+    for offset in range(max_following_lines + 1):
+        candidate_index = index + offset
+        if candidate_index >= len(lines):
+            break
+
+        trimmed = trim_context_at_schedule_boundary(lines[candidate_index], labels)
+        if not trimmed:
+            break
+
+        context_lines.append(trimmed)
+        if offset > 0 and extract_date_candidates(trimmed):
+            break
+
+    return collapse_whitespace(" ".join(context_lines))
+
+
 def extract_labeled_date(
     record: dict[str, str],
     lines: list[str],
     labels: tuple[str, ...],
     *,
     prefer_latest: bool = False,
+    require_keywords: tuple[str, ...] | None = None,
 ) -> str | None:
     for index, line in enumerate(lines):
         lowered = line.lower()
         if not any(label in lowered for label in labels):
             continue
 
-        same_line_candidate = select_candidates(
+        context = build_labeled_date_context(lines, index, labels)
+        if require_keywords and not any(keyword in context.lower() for keyword in require_keywords):
+            continue
+
+        candidate = select_candidates(
             record,
-            line,
+            context,
             prefer_latest=prefer_latest,
         )
-        if same_line_candidate:
-            return same_line_candidate
-
-        if index + 1 < len(lines):
-            next_line_candidate = select_candidates(
-                record,
-                " ".join(lines[index : index + 2]),
-                prefer_latest=prefer_latest,
-            )
-            if next_line_candidate:
-                return next_line_candidate
+        if candidate:
+            return candidate
     return None
 
 
@@ -920,7 +984,7 @@ def extract_structured_updates_from_snapshot(
         record,
         snapshot.lines,
         SUBMISSION_LINE_LABELS,
-        prefer_latest=True,
+        prefer_latest=False,
     )
     if submission_deadline and "submission_deadline" not in updates:
         updates["submission_deadline"] = submission_deadline
@@ -1127,7 +1191,7 @@ def detect_deadline_extension_signal(
     record: dict[str, str],
     snapshot: PageSnapshot,
 ) -> tuple[str | None, str | None]:
-    if not snapshot.ok or not snapshot.text:
+    if not snapshot.ok:
         return None, None
 
     current_deadline = normalize_date(record.get("submission_deadline"))
@@ -1135,29 +1199,28 @@ def detect_deadline_extension_signal(
     if not current_deadline or not current_deadline_dt:
         return None, None
 
-    windows = collect_keyword_windows(snapshot.text, EXTENSION_KEYWORDS, before=320, after=320)
-    if not windows:
-        return None, None
+    extended_deadline = extract_labeled_date(
+        record,
+        snapshot.lines,
+        SUBMISSION_LINE_LABELS,
+        prefer_latest=True,
+        require_keywords=EXTENSION_KEYWORDS,
+    )
+    if extended_deadline:
+        extended_deadline_dt = parse_normalized_date(extended_deadline)
+        if extended_deadline_dt and extended_deadline_dt > current_deadline_dt:
+            return (
+                extended_deadline,
+                "Submission-labeled schedule context shows an extended or new deadline.",
+            )
 
-    later_candidates: list[str] = []
-    for window in windows:
-        for candidate in extract_date_candidates(window):
-            candidate_dt = parse_normalized_date(candidate)
-            if candidate_dt and candidate_dt > current_deadline_dt:
-                later_candidates.append(candidate)
-
-    later_candidates = dedupe_preserve_order(later_candidates)
-    if later_candidates:
-        latest_candidate = max(later_candidates, key=lambda value: parse_normalized_date(value))
+    if snapshot.text and any(keyword in snapshot.text.lower() for keyword in EXTENSION_KEYWORDS):
         return (
-            latest_candidate,
-            f"Page mentions an extended or new deadline and shows a later date candidate ({latest_candidate}).",
+            None,
+            "Page mentions an extended or new deadline, but no submission-labeled replacement date was extracted confidently.",
         )
 
-    return (
-        None,
-        "Page mentions an extended or new deadline, but no later replacement date was extracted confidently.",
-    )
+    return None, None
 
 
 def page_mentions_current_deadline(record: dict[str, str], snapshot: PageSnapshot) -> bool:
