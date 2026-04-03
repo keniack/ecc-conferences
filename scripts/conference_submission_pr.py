@@ -316,7 +316,7 @@ def enrich_submission_record(
 ) -> tuple[dict[str, str], dict[str, Any]]:
     seed_record = build_seed_record(fields)
     prepared = prepare_conference(seed_record, timeout=timeout, search_fallback=True)
-    fallback_url = preferred_public_snapshot_url(prepared.snapshots)
+    fallback_url = preferred_public_snapshot_url(seed_record, prepared.snapshots)
     details: dict[str, Any] = {
         "seed_record": seed_record,
         "reason": collapse_whitespace(str(prepared.heuristic.get("reason", ""))),
