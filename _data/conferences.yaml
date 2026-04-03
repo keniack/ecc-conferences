@@ -449,3 +449,12 @@ conferences:
   conference_end: 11.09.2026
   location: Rende, Italy
   website: https://swc-ieee-2026.github.io/swc/
+- name: European Conference on Service-Oriented and Cloud Computing
+  acronym: ESOCC
+  ranking: Unknown
+  submission_deadline: 10.04.2026
+  notification: 27.04.2026
+  conference_start: 07.09.2026
+  conference_end: 08.09.2026
+  location: Bolzano, Italy
+  website: https://conf.researchr.org/home/esocc-2026
