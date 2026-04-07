@@ -1656,6 +1656,39 @@ def preferred_public_snapshot_url(record: dict[str, str], snapshots: list[PageSn
     return None
 
 
+def append_linked_cfp_snapshots(
+    snapshots: list[PageSnapshot],
+    record: dict[str, str],
+    timeout: int,
+    limit: int = 2,
+) -> None:
+    primary_snapshot = snapshots[0]
+    if not primary_snapshot.ok:
+        return
+
+    seen_urls = {
+        candidate
+        for snapshot in snapshots
+        for candidate in (snapshot.url, snapshot.final_url)
+        if candidate
+    }
+    for link in linked_cfp_candidates(primary_snapshot, limit=limit):
+        candidate_url = link.url
+        if (
+            candidate_url in seen_urls
+            or is_disallowed_conference_url(candidate_url)
+            or is_pdf_url(candidate_url)
+            or is_incompatible_edition_url(record, candidate_url)
+        ):
+            continue
+
+        candidate_snapshot = fetch_page(candidate_url, timeout)
+        snapshots.append(candidate_snapshot)
+        seen_urls.add(candidate_url)
+        if candidate_snapshot.final_url:
+            seen_urls.add(candidate_snapshot.final_url)
+
+
 def prepare_conference(
     record: dict[str, str],
     timeout: int,
@@ -1663,10 +1696,16 @@ def prepare_conference(
 ) -> PreparedConference:
     primary_snapshot = fetch_page(record["website"], timeout)
     snapshots = [primary_snapshot]
+    append_linked_cfp_snapshots(snapshots, record, timeout)
 
     if search_fallback and should_search_for_replacement(record, primary_snapshot):
         for candidate_url in search_candidate_urls(record, timeout):
-            if candidate_url == record["website"]:
+            if any(
+                candidate_url == existing_url
+                for snapshot in snapshots
+                for existing_url in (snapshot.url, snapshot.final_url)
+                if existing_url
+            ):
                 continue
             candidate_snapshot = fetch_page(candidate_url, timeout)
             snapshots.append(candidate_snapshot)
