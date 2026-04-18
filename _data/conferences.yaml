@@ -11,8 +11,8 @@ conferences:
 - name: IEEE International Conference on Autonomic Computing and Self-Organizing Systems
   acronym: ACSOS
   ranking: Unknown
-  submission_deadline: 17.04.2026
-  notification: 15.06.2026
+  submission_deadline: 15.06.2026
+  notification: 25.06.2026
   conference_start: 07.09.2026
   conference_end: 11.09.2026
   location: Cesena, Italy
@@ -353,8 +353,8 @@ conferences:
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
   ranking: A*
-  submission_deadline: 15.04.2026
-  notification: 27.07.2026
+  submission_deadline: 20.08.2025
+  notification: 24.11.2025
   conference_start: 22.03.2026
   conference_end: 26.03.2026
   location: Pittsburgh, USA
