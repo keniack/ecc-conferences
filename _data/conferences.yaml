@@ -11,7 +11,7 @@ conferences:
 - name: IEEE International Conference on Autonomic Computing and Self-Organizing Systems
   acronym: ACSOS
   ranking: Unknown
-  submission_deadline: 17.04.2026
+  submission_deadline: 01.05.2026
   notification: 15.06.2026
   conference_start: 07.09.2026
   conference_end: 11.09.2026
@@ -38,7 +38,7 @@ conferences:
 - name: IEEE International Conference on Synergies in Next-Generation Cyber-Physical Systems
   acronym: SNGC
   ranking: Unknown
-  submission_deadline: 15.04.2026
+  submission_deadline: 20.04.2026
   notification: 12.06.2026
   conference_start: 16.09.2026
   conference_end: 18.09.2026
@@ -146,12 +146,12 @@ conferences:
 - name: International Conference on Dependable Systems and Their Applications
   acronym: DSA
   ranking: Unknown
-  submission_deadline: 30.09.2025
-  notification: 20.10.2025
-  conference_start: 24.11.2025
-  conference_end: 26.11.2025
-  location: Sharjah, UAE
-  website: https://dsa25.techconf.org/submission
+  submission_deadline: 10.10.2026
+  notification: 01.11.2026
+  conference_start: 28.11.2026
+  conference_end: 29.11.2026
+  location: Xiamen, China
+  website: https://dsa26.techconf.org/submission
 - name: International Conference on Service-Oriented System Engineering
   acronym: SOSE
   ranking: Unknown
