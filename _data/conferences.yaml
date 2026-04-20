@@ -353,11 +353,11 @@ conferences:
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
   ranking: A*
-  submission_deadline: 15.04.2026
-  notification: 27.07.2026
+  submission_deadline: 20.09.2026
+  notification: 04.12.2026
   conference_start: 22.03.2026
   conference_end: 26.03.2026
-  location: Pittsburgh, USA
+  location: Crete, Greece
   website: https://www.asplos-conference.org/call-for-papers-asplos27/
 - name: European conference on parallel and distributed processing
   acronym: Euro-Par
