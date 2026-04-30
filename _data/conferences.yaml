@@ -380,12 +380,12 @@ conferences:
 - name: IEEE International Conference on Cloud Engineering
   acronym: IC2E
   ranking: Unknown
-  submission_deadline: 24.04.2026
-  notification: 23.06.2026
+  submission_deadline: 15.05.2026
+  notification: 14.07.2026
   conference_start: 13.10.2026
   conference_end: 16.10.2026
-  location: San Jose, California, USA
-  website: https://conferences.computer.org/IC2E/2026/
+  location: Santa Clara, California, USA
+  website: https://conferences.computer.org/IC2E/2026/cfp-main.html
 - name: ACM/IEEE Symposium on Edge Computing
   acronym: SEC
   ranking: Unknown
