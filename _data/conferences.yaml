@@ -11,8 +11,8 @@ conferences:
 - name: IEEE International Conference on Autonomic Computing and Self-Organizing Systems
   acronym: ACSOS
   ranking: Unknown
-  submission_deadline: 01.05.2026
-  notification: 15.06.2026
+  submission_deadline: 15.06.2026
+  notification: 25.06.2026
   conference_start: 07.09.2026
   conference_end: 11.09.2026
   location: Cesena, Italy
