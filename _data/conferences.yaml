@@ -65,12 +65,12 @@ conferences:
 - name: ACM Symposium On Applied Computing
   acronym: ACM SAC
   ranking: B
-  submission_deadline: 17.10.2025
-  notification: 21.11.2025
-  conference_start: 23.03.2026
-  conference_end: 27.03.2026
-  location: Thessaloniki, Greece
-  website: https://www.sigapp.org/sac/sac2026/
+  submission_deadline: 02.10.2026
+  notification: 21.11.2026
+  conference_start: 05.04.2027
+  conference_end: 09.04.2027
+  location: Gwangju, South Korea
+  website: https://www.sigapp.org/sac/sac2027
 - name: International Performance Computing and Communications Conference
   acronym: IPCCC
   ranking: C
