@@ -458,3 +458,12 @@ conferences:
   conference_end: 08.09.2026
   location: Bolzano, Italy
   website: https://conf.researchr.org/home/esocc-2026
+- name: IEEE International Conference on Collaboration and Internet Computing
+  acronym: IEEE CIC
+  ranking: Unknown
+  submission_deadline: 01.01.2026
+  notification: 01.01.2026
+  conference_start: 04.11.2026
+  conference_end: 06.11.2026
+  location: San Jose, USA
+  website: https://cic.ieee-cs.org/2026/call-for-papers/
