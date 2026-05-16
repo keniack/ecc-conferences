@@ -461,8 +461,8 @@ conferences:
 - name: IEEE International Conference on Collaboration and Internet Computing
   acronym: IEEE CIC
   ranking: Unknown
-  submission_deadline: 01.01.2026
-  notification: 01.01.2026
+  submission_deadline: 01.06.2026
+  notification: 25.07.2026
   conference_start: 04.11.2026
   conference_end: 06.11.2026
   location: San Jose, USA
