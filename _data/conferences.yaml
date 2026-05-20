@@ -2,7 +2,7 @@ conferences:
 - name: IEEE International Conference on eScience
   acronym: eScience
   ranking: Unknown
-  submission_deadline: 18.05.2026
+  submission_deadline: 01.06.2026
   notification: 29.06.2026
   conference_start: 28.09.2026
   conference_end: 02.10.2026
@@ -416,8 +416,8 @@ conferences:
 - name: Utility and Cloud Computing
   acronym: UCC
   ranking: Unknown
-  submission_deadline: 19.09.2025
-  notification: 07.10.2025
+  submission_deadline: 19.08.2026
+  notification: 30.09.2025
   conference_start: 01.12.2025
   conference_end: 04.12.2025
   location: Florianopolis, Brazil
