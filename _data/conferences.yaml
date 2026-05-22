@@ -111,7 +111,7 @@ conferences:
   acronym: IISWC
   ranking: Unknown
   submission_deadline: 21.05.2026
-  notification: 06.07.2026
+  notification: 27.07.2026
   conference_start: 27.09.2026
   conference_end: 29.09.2026
   location: Boulder, USA
@@ -384,8 +384,8 @@ conferences:
   notification: 14.07.2026
   conference_start: 13.10.2026
   conference_end: 16.10.2026
-  location: Santa Clara, California, USA
-  website: https://conferences.computer.org/IC2E/2026/cfp-main.html
+  location: San Jose, California, USA
+  website: https://conferences.computer.org/IC2E/2026/cfp-demos-posters.html
 - name: ACM/IEEE Symposium on Edge Computing
   acronym: SEC
   ranking: Unknown
