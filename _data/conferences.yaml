@@ -2,8 +2,8 @@ conferences:
 - name: IEEE International Conference on eScience
   acronym: eScience
   ranking: Unknown
-  submission_deadline: 01.06.2026
-  notification: 29.06.2026
+  submission_deadline: 18.05.2026
+  notification: 27.07.2026
   conference_start: 28.09.2026
   conference_end: 02.10.2026
   location: Naples, Italy
@@ -139,8 +139,8 @@ conferences:
   ranking: Unknown
   submission_deadline: 01.06.2026
   notification: 29.07.2026
-  conference_start: 14.10.2026
-  conference_end: 17.10.2026
+  conference_start: 27.10.2026
+  conference_end: 30.10.2026
   location: Paris, France
   website: https://flta-conference.org/flta-2026/
 - name: International Conference on Dependable Systems and Their Applications
@@ -236,7 +236,7 @@ conferences:
 - name: IEEE International Symposium on Real-Time Distributed Computing
   acronym: ISORC
   ranking: C
-  submission_deadline: 03.03.2026
+  submission_deadline: 21.03.2026
   notification: 24.03.2026
   conference_start: 27.05.2026
   conference_end: 29.05.2026
@@ -326,12 +326,12 @@ conferences:
 - name: IEEE International Symposium on Computer Architecture and High Performance Computing
   acronym: SBAC-PAD
   ranking: B
-  submission_deadline: 29.05.2026
+  submission_deadline: 07.06.2026
   notification: 03.08.2026
   conference_start: 14.10.2026
   conference_end: 16.10.2026
   location: Madrid, Spain
-  website: https://coco-arcos.github.io/sbac-pad2026/
+  website: https://coco-arcos.github.io/sbac-pad2026/submissions/call-for-papers/
 - name: Eurosys Conference
   acronym: EuroSys
   ranking: A
