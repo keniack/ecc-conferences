@@ -290,8 +290,8 @@ conferences:
 - name: ACM International Conference on the Internet of Things
   acronym: IoT
   ranking: Unknown
-  submission_deadline: 01.08.2025
-  notification: 03.09.2025
+  submission_deadline: 30.07.2026
+  notification: 04.09.2026
   conference_start: 19.11.2025
   conference_end: 21.11.2025
   location: Newcastle upon Tyne, UK
