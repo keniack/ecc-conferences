@@ -331,7 +331,7 @@ conferences:
   conference_start: 14.10.2026
   conference_end: 16.10.2026
   location: Madrid, Spain
-  website: https://coco-arcos.github.io/sbac-pad2026/submissions/call-for-papers/
+  website: https://coco-arcos.github.io/sbac-pad2026/
 - name: Eurosys Conference
   acronym: EuroSys
   ranking: A
