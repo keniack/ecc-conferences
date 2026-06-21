@@ -80,15 +80,6 @@ conferences:
   conference_end: 22.11.2026
   location: Austin, Texas, USA
   website: https://www.ipccc.org/
-- name: International Symposium on Cluster, Cloud, and Internet Computing
-  acronym: CCGRID
-  ranking: B
-  submission_deadline: 21.12.2025
-  notification: 10.02.2026
-  conference_start: 18.05.2026
-  conference_end: 21.05.2026
-  location: Sydney, Australia
-  website: https://ccgrid2026.cdms.westernsydney.edu.au/cfp.html
 - name: International Conference on Parallel, Distributed, and Network-based Processing
   acronym: PDP
   ranking: C
@@ -469,7 +460,7 @@ conferences:
   website: https://cic.ieee-cs.org/2026/call-for-papers/
 - name: International Symposium on Cluster, Cloud, and Internet Computing
   acronym: CCGrid
-  ranking: Unknown
+  ranking: B
   submission_deadline: 15.12.2027
   notification: 10.02.2027
   conference_start: 17.05.2027
