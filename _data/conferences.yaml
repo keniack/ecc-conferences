@@ -467,3 +467,12 @@ conferences:
   conference_end: 06.11.2026
   location: San Jose, USA
   website: https://cic.ieee-cs.org/2026/call-for-papers/
+- name: International Symposium on Cluster, Cloud, and Internet Computing
+  acronym: CCGrid
+  ranking: Unknown
+  submission_deadline: 15.12.2027
+  notification: 10.02.2027
+  conference_start: 17.05.2027
+  conference_end: 20.05.2027
+  location: Dallas-Fort Worth, Texas, USA
+  website: https://hpcclab.org/ccgrid27/#call-for-papers
