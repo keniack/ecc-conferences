@@ -1,4 +1,13 @@
 conferences:
+- name: IEEE International Conference on Space Computing
+  acronym: SCC
+  ranking: Unknown
+  submission_deadline: 18.04.2026
+  notification: 09.05.2026
+  conference_start: 03.08.2026
+  conference_end: 06.08.2026
+  location: Pasadena, CA, USA
+  website: https://2026.smcit-scc.space/
 - name: IEEE International Conference on eScience
   acronym: eScience
   ranking: Unknown
