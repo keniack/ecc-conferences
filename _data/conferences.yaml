@@ -1,4 +1,13 @@
 conferences:
+- name: IEEE Aerospace Conference
+  acronym: AEC
+  ranking: Unknown
+  submission_deadline: 02.10.2026
+  notification: 30.11.2026
+  conference_start: 06.03.2027
+  conference_end: 13.03.2027
+  location: Pasadena, CA, USA
+  website: https://2026.smcit-scc.space/
 - name: IEEE International Conference on Space Computing
   acronym: SCC
   ranking: Unknown
