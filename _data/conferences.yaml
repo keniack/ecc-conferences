@@ -1,4 +1,13 @@
 conferences:
+- name: IEEE International Symposium on Network Computing and Applications
+  acronym: NCA
+  ranking: B
+  submission_deadline: 03.07.2026
+  notification: 11.09.2026
+  conference_start: 10.11.2026
+  conference_end: 13.11.2026
+  location: Ortigia-Syracuse, Italy
+  website: https://www.nca-ieee.org/2026/cf-papers.html
 - name: IEEE Aerospace Conference
   acronym: AEC
   ranking: Unknown
