@@ -191,8 +191,8 @@ conferences:
 - name: International Conference on Distributed Computing in Smart Systems and the Internet of Things
   acronym: DCOSS-IoT
   ranking: B
-  submission_deadline: 08.02.2026
-  notification: 28.03.2026
+  submission_deadline: 27.01.2026
+  notification: 08.05.2026
   conference_start: 22.06.2026
   conference_end: 24.06.2026
   location: Reykjavik, Iceland
