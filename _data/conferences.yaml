@@ -110,12 +110,12 @@ conferences:
 - name: International Conference on Parallel, Distributed, and Network-based Processing
   acronym: PDP
   ranking: C
-  submission_deadline: 09.11.2025
-  notification: 21.12.2025
-  conference_start: 25.03.2026
-  conference_end: 27.03.2026
-  location: Cluj-Napoca, Romania
-  website: https://www.pdp2026.org/submission/cfp/
+  submission_deadline: 26.10.2026
+  notification: 07.12.2026
+  conference_start: 17.03.2027
+  conference_end: 19.03.2027
+  location: Barcelona, Spain
+  website: https://www.pdp2027.org
 - name: IEEE/ACM International Symposium on Quality of Service
   acronym: IWQoS
   ranking: B
