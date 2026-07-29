@@ -83,12 +83,12 @@ conferences:
 - name: IEEE International Conference on Parallel and Distributed Systems
   acronym: ICPADS
   ranking: C
-  submission_deadline: 31.08.2025
-  notification: 15.10.2025
-  conference_start: 14.12.2025
-  conference_end: 18.12.2025
-  location: Hefei, China
-  website: http://ieee-icpads.org.cn/icpads2025.html
+  submission_deadline: 30.06.2026
+  notification: 15.10.2026
+  conference_start: 22.11.2026
+  conference_end: 26.11.2026
+  location: Tokyo, Japan
+  website: https://www.cloud-conf.net/icpads2026/cfp-research-paper.html
 - name: ACM Symposium On Applied Computing
   acronym: ACM SAC
   ranking: B
@@ -227,12 +227,12 @@ conferences:
 - name: ACM International Conference on Performance Engineering
   acronym: ICPE
   ranking: B
-  submission_deadline: 10.11.2025
-  notification: 19.01.2025
-  conference_start: 04.05.2026
-  conference_end: 08.05.2026
-  location: Florence, Italy
-  website: https://icpe2026.spec.org/
+  submission_deadline: 10.11.2026
+  notification: 19.01.2027
+  conference_start: 24.05.2027
+  conference_end: 28.05.2027
+  location: Gothenburg, Sweden
+  website: https://icpe2027.spec.org/
 - name: ACM International Symposium on High Performance Distributed Computing
   acronym: HPDC
   ranking: A
@@ -263,12 +263,12 @@ conferences:
 - name: IEEE International Parallel and Distributed Processing Symposium
   acronym: IPDPS
   ranking: A
-  submission_deadline: 09.10.2025
+  submission_deadline: 08.10.2026
   notification: 02.02.2026
-  conference_start: 25.05.2026
-  conference_end: 29.05.2026
-  location: New Orleans, USA
-  website: https://www.ipdps.org/ipdps2026/2026-call-for-papers.html
+  conference_start: 01.06.2027
+  conference_end: 05.06.2027
+  location: Seatle, USA
+  website: https://www.ipdps.org
 - name: IEEE International Conference on Pervasive Computing and Communications
   acronym: PERCOM
   ranking: A
