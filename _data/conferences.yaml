@@ -308,7 +308,7 @@ conferences:
 - name: ACM International Conference on the Internet of Things
   acronym: IoT
   ranking: Unknown
-  submission_deadline: 30.07.2026
+  submission_deadline: 22.08.2026
   notification: 04.09.2026
   conference_start: 17.11.2026
   conference_end: 20.11.2026
@@ -434,10 +434,10 @@ conferences:
 - name: Utility and Cloud Computing
   acronym: UCC
   ranking: Unknown
-  submission_deadline: 19.08.2026
-  notification: 30.09.2025
-  conference_start: 01.12.2025
-  conference_end: 04.12.2025
+  submission_deadline: 11.09.2026
+  notification: 12.10.2026
+  conference_start: 01.12.2026
+  conference_end: 04.12.2026
   location: Florianopolis, Brazil
   website: https://ucc-conference.org/
 - name: IEEE International Conference on Big Data
