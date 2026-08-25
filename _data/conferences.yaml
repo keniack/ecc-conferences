@@ -309,7 +309,7 @@ conferences:
   acronym: IoT
   ranking: Unknown
   submission_deadline: 22.08.2026
-  notification: 04.09.2026
+  notification: 24.09.2026
   conference_start: 17.11.2026
   conference_end: 20.11.2026
   location: Newcastle upon Tyne, UK
@@ -456,7 +456,7 @@ conferences:
   notification: 08.05.2026
   conference_start: 29.06.2026
   conference_end: 04.07.2026
-  location: Heraklion, Crete
+  location: Crete, Greece
   website: https://www.summersoc.eu/call-for-papers/
 - name: IEEE Smart World Congress
   acronym: SWC
