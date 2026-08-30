@@ -494,3 +494,12 @@ conferences:
   conference_end: 20.05.2027
   location: Dallas-Fort Worth, Texas, USA
   website: https://hpcclab.org/ccgrid27/#call-for-papers
+- name: 23rd Annual IEEE International Conference on Sensing, Communication, and Networking 2027
+  acronym: SECON
+  ranking: Unknown
+  submission_deadline: 30.11.2026
+  notification: 15.02.2027
+  conference_start: 02.01.2026
+  conference_end: 03.01.2026
+  location: TBD
+  website: https://secon2027.ieee-secon.org/call-papers
