@@ -151,7 +151,7 @@ conferences:
   conference_start: 04.11.2026
   conference_end: 06.11.2026
   location: San Jose, CA, USA
-  website: https://www.sis.pitt.edu/lersais/conference/cogmi/2026/index.html
+  website: https://cogmi.ieee-cs.org/
 - name: International Conference on Federated Learning Technologies and Applications
   acronym: FLTA
   ranking: Unknown
