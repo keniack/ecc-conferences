@@ -1,4 +1,13 @@
 conferences:
+- name: IEEE International Symposium on Parallel and Distributed Processing with Applications
+  acronym: ISPA
+  ranking: Unknown
+  submission_deadline: 30.09.2026
+  notification: 30.10.2026
+  conference_start: 27.12.2026
+  conference_end: 30.12.2026
+  location: Kuala Lumpur, Malaysia
+  website: https://ieee-ai-for-science.org/2026/ispa/index.php
 - name: IEEE International Symposium on Network Computing and Applications
   acronym: NCA
   ranking: B
@@ -44,15 +53,15 @@ conferences:
   conference_end: 11.09.2026
   location: Cesena, Italy
   website: https://2026.acsos.org/
-- name: IEEE Global Congress on Emerging Technologies
-  acronym: GCET2025
+- name: IEEE International Conference on Omni-Layer Intelligent Systems 
+  acronym: COINS
   ranking: Unknown
-  submission_deadline: 25.10.2025
-  notification: 01.03.2026
-  conference_start: 02.12.2025
-  conference_end: 05.12.2025
-  location: Lyon, France
-  website: https://www.gcet-conference.com/GCET2025/call-for-papers.php
+  submission_deadline: 29.04.2026
+  notification: 02.06.2026
+  conference_start: 07.09.2026
+  conference_end: 09.09.2026
+  location: Bologna, Italy
+  website: https://coinsconf.com/
 - name: IEEE Symposium on Computers and Communications
   acronym: ISCC
   ranking: C
@@ -137,12 +146,12 @@ conferences:
 - name: 'International Conference on Mobility: Operations, Services, and Technologies'
   acronym: MOST
   ranking: Unknown
-  submission_deadline: 04.01.2026
-  notification: 28.02.2026
-  conference_start: 04.05.2026
-  conference_end: 06.05.2026
-  location: Detroit, USA
-  website: https://ieeemobility.org/MOST2026/call_for_papers.php
+  submission_deadline: 01.12.2026
+  notification: 15.01.2027
+  conference_start: 04.05.2027
+  conference_end: 07.05.2027
+  location: Pomona, California
+  website: https://www.ieeemobility.org/call-for-papers.html
 - name: International Conference on Cognitive Machine Intelligence
   acronym: CogMi
   ranking: Unknown
@@ -292,10 +301,10 @@ conferences:
   ranking: Unknown
   submission_deadline: 15.01.2026
   notification: 02.01.2026
-  conference_start: 02.02.2026
-  conference_end: 05.02.2026
-  location: Guangzhou, China
-  website: https://www.bigcomputing.org/
+  conference_start: 25.01.2027
+  conference_end: 28.01.2027
+  location: Fukuoka, Japan
+  website: https://bigcomp2027-website.pages.dev/call-for-papers/
 - name: International Conference on Smart Computing
   acronym: SmartComp
   ranking: B
@@ -317,12 +326,21 @@ conferences:
 - name: IEEE Latin American International Conference on the Internet of Things
   acronym: LC-IoT
   ranking: Unknown
-  submission_deadline: 16.12.2025
-  notification: 13.01.2026
-  conference_start: 19.03.2026
-  conference_end: 21.03.2026
-  location: "Bogot\xE1, Colombia"
-  website: https://lciot2026.iot.ieee.org/
+  submission_deadline: 28.11.2026
+  notification: 15.01.2027
+  conference_start: 28.04.2027
+  conference_end: 30.04.2027
+  location: "Santiago, Chile"
+  website: https://latiniot2027.iot.ieee.org
+- name: IEEE Annual Congress on Artificial Intelligence of Things
+  acronym: IEEE AIoT
+  ranking: Unknown
+  submission_deadline: 10.09.2026
+  notification: 16.10.2026
+  conference_start: 14.12.2026
+  conference_end: 16.12.2026
+  location: "Kobe, Japan"
+  website: https://www.ieee-aiot.org/2026/cf-papers.php
 - name: ACM/IFIP/USENIX International Middleware Conference
   acronym: MIDDLEWARE
   ranking: A
