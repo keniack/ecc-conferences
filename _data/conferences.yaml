@@ -53,7 +53,7 @@ conferences:
   conference_end: 11.09.2026
   location: Cesena, Italy
   website: https://2026.acsos.org/
-- name: IEEE International Conference on Omni-Layer Intelligent Systems 
+- name: IEEE International Conference on Omni-Layer Intelligent Systems
   acronym: COINS
   ranking: Unknown
   submission_deadline: 29.04.2026
@@ -330,16 +330,16 @@ conferences:
   notification: 15.01.2027
   conference_start: 28.04.2027
   conference_end: 30.04.2027
-  location: "Santiago, Chile"
+  location: Santiago, Chile
   website: https://latiniot2027.iot.ieee.org
 - name: IEEE Annual Congress on Artificial Intelligence of Things
   acronym: IEEE AIoT
   ranking: Unknown
-  submission_deadline: 10.09.2026
-  notification: 16.10.2026
+  submission_deadline: 24.08.2026
+  notification: 16.11.2026
   conference_start: 14.12.2026
   conference_end: 16.12.2026
-  location: "Kobe, Japan"
+  location: Kobe, Japan
   website: https://www.ieee-aiot.org/2026/cf-papers.php
 - name: ACM/IFIP/USENIX International Middleware Conference
   acronym: MIDDLEWARE
