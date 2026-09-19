@@ -1,4 +1,13 @@
 conferences:
+- name: IEEE SPACE
+  acronym: SPACE
+  ranking: Unknown
+  submission_deadline: 31.01.2027
+  notification: 30.04.2027
+  conference_start: 05.07.2027
+  conference_end: 07.07.2027
+  location: Marina Bay Sands, Singapore 
+  website: https://ieeespace.org/
 - name: IEEE International Symposium on Parallel and Distributed Processing with Applications
   acronym: ISPA
   ranking: Unknown
@@ -209,11 +218,11 @@ conferences:
 - name: International Conference on Distributed Computing in Smart Systems and the Internet of Things
   acronym: DCOSS-IoT
   ranking: B
-  submission_deadline: 27.01.2026
-  notification: 08.05.2026
-  conference_start: 22.06.2026
-  conference_end: 24.06.2026
-  location: Reykjavik, Iceland
+  submission_deadline: 27.01.2027
+  notification: 08.05.2027
+  conference_start: 21.06.2027
+  conference_end: 23.06.2027
+  location: Montreal, Canada
   website: https://dcoss.org/
 - name: International Conference on Service-Oriented Computing
   acronym: ICSOC
@@ -299,8 +308,8 @@ conferences:
 - name: IEEE BigComp
   acronym: BigComp
   ranking: Unknown
-  submission_deadline: 15.01.2026
-  notification: 02.01.2026
+  submission_deadline: 30.09.2026
+  notification: 30.11.2026
   conference_start: 25.01.2027
   conference_end: 28.01.2027
   location: Fukuoka, Japan
@@ -353,12 +362,12 @@ conferences:
 - name: IEEE COMPSAC Symposium on Smart IoT Systems & Applications (SIoT)
   acronym: COMPSAC
   ranking: B
-  submission_deadline: 20.02.2026
-  notification: 12.04.2026
-  conference_start: 20.02.2026
-  conference_end: 31.01.2026
-  location: Madrid, Spain
-  website: https://ieeecompsac.computer.org/2026/compsac-2026-symposium-on-smart-iot-systems-applications-siot-iot-based-scientific-research/
+  submission_deadline: 31.01.2027
+  notification: 07.04.2027
+  conference_start: 13.07.2027
+  conference_end: 16.07.2027
+  location: Tokyo, Japan
+  website: https://ieeecompsac.computer.org/2027/
 - name: IEEE International Symposium on Computer Architecture and High Performance Computing
   acronym: SBAC-PAD
   ranking: B
@@ -371,21 +380,21 @@ conferences:
 - name: Eurosys Conference
   acronym: EuroSys
   ranking: A
-  submission_deadline: 07.01.2026
-  notification: 30.01.2026
-  conference_start: 13.04.2026
-  conference_end: 16.04.2026
-  location: Edinburgh, UK
-  website: https://2026.eurosys.org/
+  submission_deadline: 24.09.2026
+  notification: 30.01.2027
+  conference_start: 19.04.2027
+  conference_end: 23.04.2027
+  location: Rabat, Morocco
+  website: https://2027.eurosys.org/
 - name: IEEE Services
   acronym: Services
   ranking: A/B
-  submission_deadline: 22.03.2026
-  notification: 10.05.2026
-  conference_start: 13.07.2026
-  conference_end: 18.07.2026
-  location: Sydney, Australia
-  website: https://services.conferences.computer.org/2026/
+  submission_deadline: 22.03.2027
+  notification: 10.05.2027
+  conference_start: 13.07.2027
+  conference_end: 18.07.2027
+  location: Abu Dhabi, United Arab Emirates
+  website: https://services.conferences.computer.org/2027/
 - name: ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   acronym: ASPLOS
   ranking: A*
@@ -398,21 +407,21 @@ conferences:
 - name: European conference on parallel and distributed processing
   acronym: Euro-Par
   ranking: B
-  submission_deadline: 06.03.2026
-  notification: 30.04.2025
-  conference_start: 24.08.2026
-  conference_end: 28.08.2026
-  location: Pisa, Italy
-  website: https://2026.euro-par.org/
+  submission_deadline: 06.03.2027
+  notification: 30.04.2027
+  conference_start: 23.08.2027
+  conference_end: 27.08.2027
+  location: Groningen, Netherlands
+  website: https://2027.euro-par.org/
 - name: International Conference on Future Internet of Things and Cloud
   acronym: FiCloud
   ranking: Unknown
-  submission_deadline: 07.04.2026
-  notification: 15.05.2026
-  conference_start: 20.07.2026
-  conference_end: 22.07.2026
-  location: Granada, Spain
-  website: https://www.ficloud.org/2026/cfp.php
+  submission_deadline: 10.03.2027
+  notification: 25.05.2027
+  conference_start: 20.07.2027
+  conference_end: 22.07.2027
+  location: Prague, Czech Republic
+  website: https://www.ficloud.org/2027/cfp.php
 - name: IEEE International Conference on Cloud Engineering
   acronym: IC2E
   ranking: Unknown
@@ -434,12 +443,12 @@ conferences:
 - name: ACM International Conference on Distributed and Event-based Systems
   acronym: DEBS
   ranking: Unknown
-  submission_deadline: 01.03.2026
-  notification: 18.04.2026
-  conference_start: 23.06.2026
-  conference_end: 26.06.2026
-  location: Lisbon, Portugal
-  website: https://2026.debs.org/
+  submission_deadline: 23.02.2027
+  notification: 27.04.2027
+  conference_start: 29.06.2027
+  conference_end: 01.07.2027
+  location: Galway, Ireland
+  website: https://2027.debs.org/
 - name: ACM Symposium on Cloud Computing
   acronym: SoCC
   ranking: Unknown
