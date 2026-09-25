@@ -6,7 +6,7 @@ conferences:
   notification: 30.04.2027
   conference_start: 05.07.2027
   conference_end: 07.07.2027
-  location: Marina Bay Sands, Singapore 
+  location: Marina Bay Sands, Singapore
   website: https://ieeespace.org/
 - name: IEEE International Symposium on Parallel and Distributed Processing with Applications
   acronym: ISPA
@@ -380,8 +380,8 @@ conferences:
 - name: Eurosys Conference
   acronym: EuroSys
   ranking: A
-  submission_deadline: 24.09.2026
-  notification: 30.01.2027
+  submission_deadline: 06.01.2027
+  notification: 29.01.2027
   conference_start: 19.04.2027
   conference_end: 23.04.2027
   location: Rabat, Morocco
