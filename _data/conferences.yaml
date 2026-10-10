@@ -1,4 +1,22 @@
 conferences:
+- name: 78TH INTERNATIONAL ASTRONAUTICAL CONGRESS
+  acronym: IAC
+  ranking: Unknown
+  submission_deadline: 28.02.2027
+  notification: 20.02.2027
+  conference_start: 27.09.2027
+  conference_end: 01.10.2027
+  location: Poznan, Poland
+  website: https://www.iafastro.org/assets/files/events/iac/2027/IAC2027_Call_for_papers.pdf
+- name: SmallSat Europe
+  acronym: SmallSat
+  ranking: Unknown
+  submission_deadline: 23.01.2027
+  notification: 20.02.2027
+  conference_start: 05.07.2027
+  conference_end: 07.07.2027
+  location: Amsterdam, Netherlands
+  website: https://smallsateurope.com/call-for-papers/
 - name: IEEE SPACE
   acronym: SPACE
   ranking: Unknown
@@ -11,7 +29,7 @@ conferences:
 - name: IEEE International Symposium on Parallel and Distributed Processing with Applications
   acronym: ISPA
   ranking: Unknown
-  submission_deadline: 30.09.2026
+  submission_deadline: 15.10.2026
   notification: 30.10.2026
   conference_start: 27.12.2026
   conference_end: 30.12.2026
@@ -92,12 +110,12 @@ conferences:
 - name: IEEE International Conference on Fog and Edge Computing
   acronym: ICFEC
   ranking: Unknown
-  submission_deadline: 18.01.2026
-  notification: 23.02.2026
-  conference_start: 18.05.2026
-  conference_end: 21.05.2026
-  location: Sydney, Australia
-  website: https://icfec2026.hanyang.ac.kr/
+  submission_deadline: 20.12.2026
+  notification: 23.02.2027
+  conference_start: 24.05.2027
+  conference_end: 27.05.2027
+  location: Dallas-Fort Worth, Texas
+  website: https://fcrlab.unime.it/icfec2027/
 - name: IEEE International Conference on Parallel and Distributed Systems
   acronym: ICPADS
   ranking: C
@@ -272,12 +290,12 @@ conferences:
 - name: IEEE International Symposium on Real-Time Distributed Computing
   acronym: ISORC
   ranking: C
-  submission_deadline: 21.03.2026
-  notification: 24.03.2026
-  conference_start: 27.05.2026
-  conference_end: 29.05.2026
-  location: Hamilton, Canada
-  website: https://mcscert.github.io/isorc2026/cfp/research.html
+  submission_deadline: 15.10.2026
+  notification: 01.12.2026
+  conference_start: 07.04.2027
+  conference_end: 09.04.2027
+  location:  IIT Ropar, India
+  website: https://isorc-conference.org/
 - name: IEEE International Parallel and Distributed Processing Symposium
   acronym: IPDPS
   ranking: A
@@ -299,16 +317,16 @@ conferences:
 - name: International Conference on Distributed Computing Systems
   acronym: ICDCS
   ranking: A
-  submission_deadline: 21.01.2026
-  notification: 27.04.2026
-  conference_start: 22.06.2026
-  conference_end: 25.06.2026
-  location: Seoul, South Korea
-  website: https://icdcs2026.icdcs.org/
+  submission_deadline: 21.01.2027
+  notification: 27.04.2027
+  conference_start: 05.07.2027
+  conference_end: 08.07.2027
+  location: Melbourne, Australia
+  website: https://icdcs2027.icdcs.org/
 - name: IEEE BigComp
   acronym: BigComp
   ranking: Unknown
-  submission_deadline: 30.09.2026
+  submission_deadline: 16.10.2026
   notification: 30.11.2026
   conference_start: 25.01.2027
   conference_end: 28.01.2027
