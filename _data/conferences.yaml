@@ -191,7 +191,7 @@ conferences:
 - name: International Conference on Federated Learning Technologies and Applications
   acronym: FLTA
   ranking: Unknown
-  submission_deadline: 01.06.2026
+  submission_deadline: 05.08.2026
   notification: 29.07.2026
   conference_start: 27.10.2026
   conference_end: 30.10.2026
@@ -294,7 +294,7 @@ conferences:
   notification: 01.12.2026
   conference_start: 07.04.2027
   conference_end: 09.04.2027
-  location:  IIT Ropar, India
+  location: IIT Ropar, India
   website: https://isorc-conference.org/
 - name: IEEE International Parallel and Distributed Processing Symposium
   acronym: IPDPS
