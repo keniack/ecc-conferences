@@ -119,8 +119,8 @@ conferences:
 - name: IEEE International Conference on Parallel and Distributed Systems
   acronym: ICPADS
   ranking: C
-  submission_deadline: 30.06.2026
-  notification: 15.10.2026
+  submission_deadline: 15.08.2026
+  notification: 15.09.2026
   conference_start: 22.11.2026
   conference_end: 26.11.2026
   location: Tokyo, Japan
